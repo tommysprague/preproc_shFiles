@@ -30,18 +30,33 @@
 
 
 
-
-
-ANATSUBJ=MRanat
-FUNCSESS=RF1/MR_RF1_vista
+ROOT=/deathstar/data/ssPri_scanner_afni
+SUBJ=KD
+ANATSUBJ=KDyork
+#FUNCSESS=RF2/KD_RF2_vista
+FUNCSESS=Map1
 #FUNC=bar_width_1_pct
 FWHM=5
-CORES=6
+CORES=10
 
-declare -a ALLFUNC=("bar_width_1_pct" "bar_width_2_pct" "bar_width_3_pct" "bar_width_1_bp" "bar_width_2_bp" "bar_width_3_bp")
+
+# TODO: loop over funcsess
+
+
+#declare -a ALLFUNC=("bar_width_1_pct" "bar_width_2_pct" "bar_width_3_pct" "bar_width_1_bp" "bar_width_2_bp" "bar_width_3_bp")
+#declare -a ALLFUNC=("bar_width_1_pctDet" "bar_width_2_pctDet" "bar_width_3_pctDet" "bar_width_1_dt" "bar_width_2_dt" "bar_width_3_dt")
+
+
+FUNCPREFIX="func_normPctDet*"
 
 #declare -a ALLFUNC=("wm_nonlinear_all_bp_noDecimate_noC2F-gFit" "wm_nonlinear_all_pct_noDecimate_noC2F-gFit")
-rm ./func_list.txt; for FUNC in "${ALLFUNC[@]}"; do printf "%s\n" $FUNC >> ./func_list.txt; done
+#rm ./func_list.txt; for FUNC in "${ALLFUNC[@]}"; do printf "%s\n" $FUNC >> ./func_list.txt; done
+
+cd $ROOT/$SUBJ/$FUNCSESS
+
+rm ./func_list.txt; for FUNC in $FUNCPREFIX; do printf "%s\n" $FUNC >> ./func_list.txt; done
+
+cd $ROOT/$SUBJ
 
 #for FUNC in "${ALLFUNC[@]}"; do
 
@@ -54,7 +69,7 @@ rm ./func_list.txt; for FUNC in "${ALLFUNC[@]}"; do printf "%s\n" $FUNC >> ./fun
 
   # LH
 ##### TEST THIS STILLL!!!!!!!!!!!
-cat ./func_list.txt | parallel -P $CORES \
+cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
 3dVol2Surf \
   -spec ./${ANATSUBJ}/SUMA/${ANATSUBJ}_lh.spec \
   -surf_A smoothwm \
@@ -69,7 +84,7 @@ cat ./func_list.txt | parallel -P $CORES \
   #-out_1D ./$FUNCSESS/lh_${FUNC}.1D.dset
 
   # RH
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   3dVol2Surf \
   -spec ./${ANATSUBJ}/SUMA/${ANATSUBJ}_rh.spec \
   -surf_A smoothwm \
@@ -84,7 +99,7 @@ cat ./func_list.txt | parallel -P $CORES \
 
 
   # convert this back into vol (unsmoothed)
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   3dSurf2Vol \
   -spec ./${ANATSUBJ}/SUMA/${ANATSUBJ}_lh.spec \
   -surf_A smoothwm \
@@ -96,7 +111,7 @@ cat ./func_list.txt | parallel -P $CORES \
   -prefix ./${FUNCSESS}/lh_{}_surf.nii.gz \
   -sdata ./${FUNCSESS}/lh_{}.niml.dset
 
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   3dSurf2Vol \
   -spec ./${ANATSUBJ}/SUMA/${ANATSUBJ}_rh.spec \
   -surf_A smoothwm \
@@ -111,7 +126,7 @@ cat ./func_list.txt | parallel -P $CORES \
 
 
   #smooth the NIML, then save as vol
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   SurfSmooth \
   -met HEAT_07 \
   -spec ./${ANATSUBJ}/SUMA/${ANATSUBJ}_lh.spec \
@@ -121,7 +136,7 @@ cat ./func_list.txt | parallel -P $CORES \
   -output ./${FUNCSESS}/lh_{}_ss${FWHM}.niml.dset \
   -target_fwhm $FWHM
 
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   SurfSmooth \
   -met HEAT_07 \
   -spec ./${ANATSUBJ}/SUMA/${ANATSUBJ}_rh.spec \
@@ -133,7 +148,7 @@ cat ./func_list.txt | parallel -P $CORES \
 
 
   # save smoothed niml as vol
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   3dSurf2Vol \
   -spec ./${ANATSUBJ}/SUMA/${ANATSUBJ}_lh.spec \
   -surf_A smoothwm \
@@ -146,7 +161,7 @@ cat ./func_list.txt | parallel -P $CORES \
   -sdata ./${FUNCSESS}/lh_{}_ss${FWHM}.niml.dset
 
 # NOTE: maybe need to use a BRIK/HEAD as -grid_parent to fix 5-d nii issue?
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   3dSurf2Vol \
   -spec ./${ANATSUBJ}/SUMA/${ANATSUBJ}_rh.spec \
   -surf_A smoothwm \
@@ -161,19 +176,19 @@ cat ./func_list.txt | parallel -P $CORES \
 
   # combine LH/RH - unsmoothed
   # first let's try saving out a mask
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   3dcalc -prefix ./${FUNCSESS}/{}_surf.nii.gz -a ./${FUNCSESS}/lh_{}_surf.nii.gz -b ./${FUNCSESS}/rh_{}_surf.nii.gz -expr "'(a+b)/(notzero(a)+notzero(b))'"
 
   # combine LH/RH - smoothed
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   3dcalc -prefix ./${FUNCSESS}/{}_ss${FWHM}.nii.gz -a ./${FUNCSESS}/lh_{}_ss${FWHM}.nii.gz -b ./${FUNCSESS}/rh_{}_ss${FWHM}.nii.gz -expr "'(a+b)/(notzero(a)+notzero(b))'"
 
   # remove intermediate components
   # (lh, rh nii files)
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   rm ./${FUNCSESS}/lh*{}*.nii.gz
 
-  cat ./func_list.txt | parallel -P $CORES \
+  cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
   rm ./${FUNCSESS}/rh*{}*.nii.gz
 
   # (lh, rh nii files)

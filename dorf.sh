@@ -21,11 +21,13 @@ TR=2.5
 subjID_vista=${SUBJ}_${SESS}_vista
 sessPath=$ROOT/$SUBJ/$SESS/$subjID_vista/
 
-EPIinput="bp_ss5"   # the 'raw' EPIs we start with (after lots of processing, etc)
-EPIext_vista="bp_ss5_squeeze_RAI" # the ones that go into vista (after some processing, saved w/ this ext)
+EPIinput="pctDet_surf"   # the 'raw' EPIs we start with (after lots of processing, etc)
+EPIext_vista="pctDet_surf_squeeze_RAI" # the ones that go into vista (after some processing, saved w/ this ext)
 
 # for CC RF_eLife
+#stimExt="_sameOrder"
 stimExt="_sameOrder"
+
 
 IP="../../surfanat_brainmask_hires.nii.gz"   # needs to be wrt vista directory
 
