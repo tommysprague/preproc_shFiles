@@ -1,12 +1,12 @@
-ROOT=/deathstar/data/ssPri_scanner_afni
-SUBJ=KD
-SESS=RF2
+ROOT=/deathstar/data/PrismaPilotScans
+SUBJ=CC
+SESS=CMRR_S4
 
-AnatSUBJ=KDyork
+AnatSUBJ=CCanat_fs6b
 
 TR=1 # null value for nifti squeeze
 
-GridParent=bar_width_1_pctDet_ss5_squeeze_RAI.nii.gz
+GridParent=bar_width_1_bc_ss5.nii.gz
 
 cd $ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 
@@ -77,7 +77,7 @@ done
 
 
 # need to niftisqueeze & convert to RAI
-for r in
+#for r in
 
 
 # and here, let's go through ROIs in a structured order (how?? using their index?) and purge overlapping voxels

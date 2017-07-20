@@ -1,16 +1,9 @@
-## Dual Phase Encoded Stimuli Mean Generation w. AFNI & MATLAB
-## Allows for multi-session registrations
-
-## June 19th 2012, Joseph Viviano
-##
-## SESS1 ... SESSn folders, func files
-##
-# rename functional files in /SESSn
-
-# EII=1; for i in *.nii.gz; do ls $i; \
-# NEWNAME=func`printf $EII`.nii.gz; \
-# echo Renaming $i to $NEWNAME; \
-# mv $i $NEWNAME; EII=`expr $EII + 1`; done
+# adapted/testing from temporal_task_tcs.sh
+#
+# GOALS:
+# [assumes afni_proc.py already run, we're working w/ volreg files]
+# TODO: incorporate support for surfsmooth'd data
+# TODO: incorporate multiple distortion correction iterations
 
 # This script:
 # 1) Deletes initial TRs
@@ -36,11 +29,12 @@ FWHM=0          # spatial smoothing (mm)
 REWINDTRS=0     # number of TRs to end of rewind
 ###############################################################################
 
-ROOT="/deathstar/data/ssPri_scanner_afni"
-SUBJ="AB"
+ROOT="/deathstar/data/PrismaPilotScans"
+SUBJ="CC"
 
 
-declare -a SESSIONS=("Map1" "Map2")
+
+declare -a SESSIONS=("MGSMap4")
 
 # get in the right directory - root directory of a given subj
 cd $ROOT/$SUBJ
@@ -48,28 +42,39 @@ cd $ROOT/$SUBJ
 #for ((s=fSES;s<=SESS;s++)); do
 for s in "${SESSIONS[@]}"; do
 
-
-
+    FUNCPRE="pb02.${SUBJ}_${s}.r"
+    FUNCSUF=".volreg+orig.BRIK"
+    #FUNCSTR="pb02.${SUBJ}_${s}.r*.volreg+orig.BRIK"
 
     ## set number of runs for current session
-    RUN=`ls -l $s/raw/*func* | wc -l`
+    #RUN=`ls -l $s/raw/*func* | wc -l`
+    RUN=`ls -l $s/${SUBJ}_${s}.results/${FUNCPRE}*${FUNCSUF} | wc -l`
     rm ./list.txt; for ((i=1;i<=RUN;i++)); do printf "%02.f\n" $i >> ./list.txt; done
+
+
+    # COPY BRIK/HEAD to nii/gz in super-directory
+    cat ./list.txt | parallel -P $CORES \
+    3dcopy $s/${SUBJ}_${s}.results/${FUNCPRE}{}${FUNCSUF} $s/func{}_volreg.nii.gz
+
+
+
+
 
     # Linear detrend (for  mean estimation)
     cat ./list.txt | parallel -P $CORES \
     3dDetrend -prefix $s/func_tmp_det{}.nii.gz\
-              -polort 1 $s/reg_func{}_to_T1.nii.gz
+              -polort 1 $s/func{}_volreg.nii.gz
 
     cat ./list.txt | parallel -P $CORES \
     3dTstat -prefix $s/func_tmp_mean{}.nii.gz \
-            -mean $s/reg_func{}_to_T1.nii.gz
+            -mean $s/func{}_volreg.nii.gz
 
     cat ./list.txt | parallel -P $CORES \
     3dTstat -prefix $s/func_tmp_detMean{}.nii.gz \
             -mean $s/func_tmp_det{}.nii.gz
 
     cat ./list.txt | parallel -P $CORES \
-    3dcalc -prefix $s/func_detrend{}.nii.gz \
+    3dcalc -prefix $s/func_volreg_detrend{}.nii.gz \
            -a $s/func_tmp_det{}.nii.gz \
            -b $s/func_tmp_mean{}.nii.gz \
            -c $s/func_tmp_detMean{}.nii.gz \
@@ -82,8 +87,8 @@ for s in "${SESSIONS[@]}"; do
 
     ## Voxel-wise mean over timeseries (this is identical tot he tmp-mean file removed above...)
     cat ./list.txt | parallel -P $CORES \
-    3dTstat -prefix $s/func_mean{}.nii.gz \
-            -mean $s/func_detrend{}.nii.gz
+    3dTstat -prefix $s/func_volreg_mean{}.nii.gz \
+            -mean $s/func_volreg_detrend{}.nii.gz
 
     # skullstrip each (note: this looked like it was missing some brain for KD); default -clfrac 0.5
 #    cat ./list.txt | parallel -P $CORES \
@@ -103,12 +108,12 @@ for s in "${SESSIONS[@]}"; do
     # done
 
     # bandpass + smooth
-    cat ./list.txt | parallel -P $CORES \
-        3dTproject -prefix $s/func_hipass{}.nii.gz \
-                   -blur $FWHM \
-                   -mask anat_EPI_mask.nii.gz \
-                   -passband 0.008 99999 \
-                   -input $s/func_detrend{}.nii.gz
+    # cat ./list.txt | parallel -P $CORES \
+    #     3dTproject -prefix $s/func_hipass{}.nii.gz \
+    #                -blur $FWHM \
+    #                -mask anat_EPI_mask.nii.gz \
+    #                -passband 0.008 99999 \
+    #                -input $s/func_detrend{}.nii.gz
 
     # percent signal change
 #    cat ./list.txt | parallel -P $CORES \
@@ -122,11 +127,20 @@ for s in "${SESSIONS[@]}"; do
 
     # percent signal change - computed w/ detrended rather than hi-pass'd data; also remove 1
     cat ./list.txt | parallel -P $CORES \
-    3dcalc -prefix $s/func_normPctDet{}.nii.gz \
-           -a $s/func_detrend{}.nii.gz \
-           -b $s/func_mean{}.nii.gz \
-           -c anat_EPI_mask.nii.gz \
-           -expr "'((a/b)-1) * c * 100'"
+    3dcalc -prefix $s/func_volreg_normPctDet{}.nii.gz \
+           -a $s/func_volreg_detrend{}.nii.gz \
+           -b $s/func_volreg_mean{}.nii.gz \
+           -c surfanat_brainmask_master.nii.gz \
+           -expr "'((a/b)-1) * ispositive(c) * 100'"
+
+
+    # ensure we're in RAI - otherwise vista, etc, get pissed
+    cat ./list.txt | parallel -P $CORES \
+    3dresample -prefix $s/func_volreg_normPctDet{}.nii.gz \
+               -orient rai \
+               -overwrite  \
+               -inset $s/func_volreg_normPctDet{}.nii.gz
+
 
 
 

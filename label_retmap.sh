@@ -2,15 +2,15 @@
 
 
 
-ROOT="/deathstar/data/ssPri_scanner_afni"
+ROOT="/deathstar/data/PrismaPilotScans"
 SUBJ="CC"
-SESS="RF1"
+SESS="CMRR_S6"
 vistaDir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 RFdir=$vistaDir/Inplane/Original   # where the RF files are saved, incl. nii.gz (raw)
 
 labels="VE phase ecc size exp x0 y0 b"
 
-declare -a RF_prefix=("RF_pctDet_ss5_squeeze_RAI" "RF_bp_ss5_squeeze_RAI" "RF_pctDet_surf_squeeze_RAI" "RF_bp_surf_squeeze_RAI")
+declare -a RF_prefix="RF_bc_ss5" # "RF_pctDet_surf")
 declare -a RF_suffix=("gFit" "sFit" "fFit")
 
 for p in "${RF_prefix[@]}"; do

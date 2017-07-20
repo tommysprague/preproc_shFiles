@@ -14,12 +14,12 @@ TR_FROM=3            # first TR to write out --- number you want to crop
 #TR_TO=122            # last TR to write out --- length - 1 (or 3dinfo -nv *.nii)
 RES=2.5             # upsampled EPI resolution
 
-ROOT="/deathstar/data/ssPri_scanner_afni"
-SUBJ="MR"
-ANATSUBJ="MRanat"
+ROOT="/deathstar/data/PrismaPilotScans"
+SUBJ="CC"
+ANATSUBJ="CC_fs6b"
 
-#declare -a SESSIONS=("Map1" "Map2")
-declare -a SESSIONS=("RF1")
+declare -a SESSIONS=("CMRR_S4" "CMRR_S6")
+#declare -a SESSIONS=("RF1")
 # get in the right directory - root directory of a given subj
 cd $ROOT/$SUBJ
 

@@ -37,7 +37,7 @@ REWINDTRS=0     # number of TRs to end of rewind
 ###############################################################################
 
 ROOT="/deathstar/data/ssPri_scanner_afni"
-SUBJ="KD"
+SUBJ="AB"
 
 # TODO: make this dynamic - text files within a directory?
 # KD_RF2
@@ -62,7 +62,7 @@ bar_width_2='02 05 08 11'
 bar_width_3='03 06 09 12'
 
 #declare -a SESSIONS=("Map1" "Map2")
-declare -a SESSIONS=("RF2")
+declare -a SESSIONS=("RF1")
 # get in the right directory - root directory of a given subj
 cd $ROOT/$SUBJ
 
