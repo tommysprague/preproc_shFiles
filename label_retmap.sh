@@ -1,16 +1,18 @@
+#!/bin/bash
+
 # write labels for AFNI briks (for RF maps, for example)
 
 
 
-ROOT="/deathstar/data/PrismaPilotScans"
-SUBJ="CC"
-SESS="CMRR_S6"
+ROOT="/deathstar/data/vRF_tcs"
+SUBJ="ZD"
+SESS="RF1"
 vistaDir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 RFdir=$vistaDir/Inplane/Original   # where the RF files are saved, incl. nii.gz (raw)
 
 labels="VE phase ecc size exp x0 y0 b"
 
-declare -a RF_prefix="RF_bc_ss5" # "RF_pctDet_surf")
+declare -a RF_prefix="RF_bc" # "RF_pctDet_surf")
 declare -a RF_suffix=("gFit" "sFit" "fFit")
 
 for p in "${RF_prefix[@]}"; do

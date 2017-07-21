@@ -1,18 +1,33 @@
 # AFNI, run unwarping, motion correction, etc
 
+SUBJ=MP
+SESS=RF1
 
-afni_proc.py -subj_id ZD_RF1 \
-             -dsets /deathstar/data/vRF_tcs/ZD/RF1/run*_bc.nii.gz \
-             -copy_anat /deathstar/data/vRF_tcs/ZD/ZDanat/SUMA/brainmask.nii \
+cd /deathstar/data/vRF_tcs/$SUBJ/$SESS/
+
+afni_proc.py -subj_id ${SUBJ}_${SESS} \
+             -dsets /deathstar/data/vRF_tcs/$SUBJ/$SESS/run*_bc.nii.gz \
+             -copy_anat /deathstar/data/vRF_tcs/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
              -blocks align volreg surf blur \
              -volreg_align_e2a \
              -volreg_base_ind 2 0 \
              -blur_size 5 \
-             -surf_anat /deathstar/data/vRF_tcs/ZD/ZDanat/SUMA/ZDanat_SurfVol.nii \
-             -surf_spec /deathstar/data/vRF_tcs/ZD/ZDanat/SUMA/ZDanat_*h.spec \
+             -surf_anat /deathstar/data/vRF_tcs/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_SurfVol+orig \
+             -surf_spec /deathstar/data/vRF_tcs/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
              -blip_forward_dset blip_for1_bc.nii.gz  \
              -blip_reverse_dset blip_rev1_bc.nii.gz \
              -execute
+
+
+# put surface projection stuff here....
+#
+# NOTE: afni_proc.py doesn't seem to play well w/ the -NIFTI argument in SUMA_Make_Spec, so using default
+
+
+
+
+
+
 
 afni_proc.py -subj_id ZD_RF1 \
             -dsets /deathstar/data/vRF_tcs/ZD/RF1/run*_bc.nii.gz \
