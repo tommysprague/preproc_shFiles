@@ -12,7 +12,7 @@ RFdir=$vistaDir/Inplane/Original   # where the RF files are saved, incl. nii.gz 
 
 labels="VE phase ecc size exp x0 y0 b"
 
-declare -a RF_prefix="RF_bc" # "RF_pctDet_surf")
+declare -a RF_prefix=("RF_ss5") # "RF_pctDet_surf")
 declare -a RF_suffix=("gFit" "sFit" "fFit")
 
 for p in "${RF_prefix[@]}"; do
