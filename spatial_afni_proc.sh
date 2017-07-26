@@ -8,18 +8,19 @@ EXPTDIR=Pri
 cd /deathstar/data/$EXPTDIR/$SUBJ/$SESS/
 
 
-# no blurring (note: for CC....)
+# no blurring (note: for CC...., add _fs6b after SUBJanat)
 afni_proc.py -subj_id ${SUBJ}_${SESS} \
              -dsets /deathstar/data/$EXPTDIR/$SUBJ/$SESS/run*_bc.nii.gz \
-             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat_fs6b/SUMA/brainmask.nii \
+             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
              -blocks align volreg \
              -volreg_align_e2a \
-             -volreg_base_ind 0 0 \
+             -volreg_base_ind 1 0 \
              -align_opts_aea -cost lpc+ZZ -giant_move \
              -blip_forward_dset blip_for1_bc.nii.gz  \
              -blip_reverse_dset blip_rev1_bc.nii.gz \
              -execute
 
+#NOTE: for -volreg_base_ind, the first # (run) should match run # in pb files (1,2,etc; 1-indexed), while the brik # (second arg) should be 0-indexed...
 
 
 # for surface blurring
