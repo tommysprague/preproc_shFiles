@@ -1,10 +1,10 @@
 # bias_correct.sh
 
-cd /deathstar/data/vRF_tcs/ZD/bctest/
+cd /deathstar/data/Pri/CC/Pri1/
 
 FUNCPREFIX=run
 BLIPPREFIX=blip_
-CORES=12
+CORES=14
 
 # mask, then add 1 where bias field == 0 (because we divide by this)
 3dAutomask -prefix head_mask.nii.gz -clfrac 0.3 -overwrite head_receive_field.nii.gz
@@ -16,7 +16,7 @@ CORES=12
 3dBlurToFWHM -input bias_field_masked.nii.gz -prefix bias_field_blur15.nii.gz -FWHM 15 -mask head_mask.nii.gz -overwrite
 
 # then 'align' to bounding box of first EPI (shouldn't actually need to align, but need to resample to this box)
-3dAllineate -1Dmatrix_save bias2func.1D -source body_receive_field.nii.gz -base run01.nii[0] -master BASE -prefix head_receive_field_al.nii.gz
+3dAllineate -1Dmatrix_save bias2func.1D -source body_receive_field.nii.gz -base run01.nii[0] -master BASE -prefix body_receive_field_al.nii.gz
 
 # apply that transform also to the bias field itself
 3dAllineate -1Dmatrix_apply bias2func.1D -source bias_field_blur15.nii.gz -base run01.nii[0] -master BASE -prefix bias_al.nii.gz -overwrite

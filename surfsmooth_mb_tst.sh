@@ -34,14 +34,14 @@
 
 
 
-ROOT=/deathstar/data/vRF_tcs
-SUBJ=ZD
-ANATSUBJ=ZDanat
-FUNCSESS=RF1
+ROOT=/deathstar/data/PrismaPilotScans
+SUBJ=CC
+ANATSUBJ=CCanat_fs6b
+FUNCSESS=MGSMap6S
 #FUNCSESS=RF1
 #FUNC=bar_width_1_pct
 FWHM=5
-CORES=10
+CORES=5
 
 TR=1.2   # TODO: figure out how to get this dynamically per run (hard w/ parallel command...)
 

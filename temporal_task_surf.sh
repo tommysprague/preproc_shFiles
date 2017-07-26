@@ -34,7 +34,7 @@ SUBJ="CC"
 
 
 
-declare -a SESSIONS=("MGSMap6L")
+declare -a SESSIONS=("MGSMap6S")
 
 # get in the right directory - root directory of a given subj
 cd $ROOT/$SUBJ
@@ -42,19 +42,19 @@ cd $ROOT/$SUBJ
 #for ((s=fSES;s<=SESS;s++)); do
 for s in "${SESSIONS[@]}"; do
 
-    FUNCPRE="pb02.${SUBJ}_${s}.r"
-    FUNCSUF=".volreg+orig.BRIK"
+    FUNCPRE="${SUBJ}_${s}.r"
+    FUNCSUF="_surf.nii.gz"
     #FUNCSTR="pb02.${SUBJ}_${s}.r*.volreg+orig.BRIK"
 
     ## set number of runs for current session
     #RUN=`ls -l $s/raw/*func* | wc -l`
-    RUN=`ls -l $s/${SUBJ}_${s}.results/${FUNCPRE}*${FUNCSUF} | wc -l`
+    RUN=`ls -l $s/${FUNCPRE}*${FUNCSUF} | wc -l`
     rm ./list.txt; for ((i=1;i<=RUN;i++)); do printf "%02.f\n" $i >> ./list.txt; done
 
 
     # COPY BRIK/HEAD to nii/gz in super-directory
     cat ./list.txt | parallel -P $CORES \
-    3dcopy $s/${SUBJ}_${s}.results/${FUNCPRE}{}${FUNCSUF} $s/func{}_volreg.nii.gz
+    3dcopy $s/${FUNCPRE}{}${FUNCSUF} $s/func{}_volreg.nii.gz
 
 
 
@@ -125,13 +125,24 @@ for s in "${SESSIONS[@]}"; do
 # -c anat_EPI_mask.nii.gz
 
 
+    # make sure there's a RAI "mask" file (TODO: use a cortex mask; get orientation from file!)
+    3dresample -prefix surfanat_brainmask_master_RAI.nii.gz \
+               -orient rai \
+               -inset surfanat_brainmask_master.nii.gz
+
+
+
+
     # percent signal change - computed w/ detrended rather than hi-pass'd data; also remove 1
     cat ./list.txt | parallel -P $CORES \
     3dcalc -prefix $s/func_volreg_normPctDet{}.nii.gz \
            -a $s/func_volreg_detrend{}.nii.gz \
            -b $s/func_volreg_mean{}.nii.gz \
-           -c surfanat_brainmask_master.nii.gz \
-           -expr "'((a/b)-1) * ispositive(c) * 100'"
+           -c surfanat_brainmask_master_RAI.nii.gz \
+           -expr "'((a/b)) * ispositive(c) * 100 - 100*ispositive(b)'" \
+           -overwrite
+
+
 
 
     # ensure we're in RAI - otherwise vista, etc, get pissed

@@ -1,16 +1,35 @@
 # AFNI, run unwarping, motion correction, etc
 
-SUBJ=MP
-SESS=RF1
+SUBJ=CC
+SESS=Pri1
 
-cd /deathstar/data/vRF_tcs/$SUBJ/$SESS/
+EXPTDIR=Pri
 
+cd /deathstar/data/$EXPTDIR/$SUBJ/$SESS/
+
+
+# no blurring (note: for CC....)
+afni_proc.py -subj_id ${SUBJ}_${SESS} \
+             -dsets /deathstar/data/$EXPTDIR/$SUBJ/$SESS/run*_bc.nii.gz \
+             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat_fs6b/SUMA/brainmask.nii \
+             -blocks align volreg \
+             -volreg_align_e2a \
+             -volreg_base_ind 0 0 \
+             -align_opts_aea -cost lpc+ZZ -giant_move \
+             -blip_forward_dset blip_for1_bc.nii.gz  \
+             -blip_reverse_dset blip_rev1_bc.nii.gz \
+             -execute
+
+
+
+# for surface blurring
 afni_proc.py -subj_id ${SUBJ}_${SESS} \
              -dsets /deathstar/data/vRF_tcs/$SUBJ/$SESS/run*_bc.nii.gz \
              -copy_anat /deathstar/data/vRF_tcs/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
              -blocks align volreg surf blur \
              -volreg_align_e2a \
-             -volreg_base_ind 2 0 \
+             -volreg_base_ind 0 0 \
+             -align_opts_aea -cost lpc+ZZ -giant_move \
              -blur_size 5 \
              -surf_anat /deathstar/data/vRF_tcs/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_SurfVol+orig \
              -surf_spec /deathstar/data/vRF_tcs/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
@@ -23,21 +42,26 @@ afni_proc.py -subj_id ${SUBJ}_${SESS} \
 #
 # NOTE: afni_proc.py doesn't seem to play well w/ the -NIFTI argument in SUMA_Make_Spec, so using default
 
+align_epi_anat.py -epi2anat                    \
+              -anat brainmask.nii                  \
+              -epi pb01.MP_RF1.r01.blip+orig        \
+              -epi_base 0 -volreg off -tshift off     \
+              -giant_move                             \
+              -cost lpc -multi_cost lpa lpc+ZZ mi
 
 
 
 
 
-
-afni_proc.py -subj_id ZD_RF1 \
-            -dsets /deathstar/data/vRF_tcs/ZD/RF1/run*_bc.nii.gz \
-            -copy_anat /deathstar/data/vRF_tcs/ZD/ZDanat/SUMA/brainmask.nii \
+afni_proc.py -subj_id CC_MGSMap6S \
+            -dsets /deathstar/data/PrismaPilotScans/CC/MGSMap6/run*_bc.nii.gz \
+            -copy_anat /deathstar/data/PrismaPilotScans/CC/CCanat_fs6b/SUMA/brainmask.nii \
             -blocks align volreg surf blur \
             -volreg_align_e2a \
-            -volreg_base_ind 2 0 \
+            -volreg_base_ind 0 503 \
             -blur_size 5 \
-            -surf_anat /deathstar/data/vRF_tcs/ZD/ZDanat/SUMA/ZDanat_SurfVol.nii \
-            -surf_spec /deathstar/data/vRF_tcs/ZD/ZDanat/SUMA/ZDanat_both.spec \
+            -surf_anat /deathstar/data/PrismaPilotScans/CC/CCanat_fs6b/SUMA/CCanat_fs6b_SurfVol+orig \
+            -surf_spec /deathstar/data/PrismaPilotScans/CC/CCanat_fs6b/SUMA/CCanat_fs6b_?h.spec \
             -blip_forward_dset blip_for1_bc.nii.gz  \
             -blip_reverse_dset blip_rev1_bc.nii.gz \
             -execute
