@@ -18,6 +18,8 @@ ROIdir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista/roi
 
 for r in roi/*1D.roi;do
 
+  # ASSUMES: lh.V1.1D.roi, etc
+
     # extract pertinents
     fname=`echo $r | cut -f 2 -d /`
     hemi=`echo $fname | cut -f 1 -d .`

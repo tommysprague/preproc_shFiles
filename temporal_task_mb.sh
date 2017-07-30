@@ -34,7 +34,7 @@ SUBJ="CC"
 
 
 
-declare -a SESSIONS=("MGSMap6L")
+declare -a SESSIONS=("MGSMap6")
 
 # get in the right directory - root directory of a given subj
 cd $ROOT/$SUBJ

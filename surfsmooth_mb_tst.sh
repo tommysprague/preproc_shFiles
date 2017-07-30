@@ -34,14 +34,14 @@
 
 
 
-ROOT=/deathstar/data/PrismaPilotScans
+ROOT=/deathstar/data/vRF_tcs
 SUBJ=CC
 ANATSUBJ=CCanat_fs6b
-FUNCSESS=MGSMap6S
+FUNCSESS=RF1
 #FUNCSESS=RF1
 #FUNC=bar_width_1_pct
 FWHM=5
-CORES=5
+CORES=8
 
 TR=1.2   # TODO: figure out how to get this dynamically per run (hard w/ parallel command...)
 
@@ -53,7 +53,7 @@ PREPROC_DIR=$ROOT/$SUBJ/$FUNCSESS/${SUBJ}_${FUNCSESS}.results/
 # OR ss5
 FUNCSUFFIX=surf  # when saving (bar_widht_1_XXX), what to use? usually surf or ss$FWHM
 SOURCESTR=surf   # pb0X.$SOURCESTR.niml.dset (typically blur or surf)
-PBNUM=pb03
+PBNUM=pb03       # pb03, surf OR pb04, blur
 
 FUNCPREFIX_lh=$PBNUM.${SUBJ}_${FUNCSESS}.lh.r*.$SOURCESTR.niml.dset #"pb03.CCpp2_CMRR6_unwarp_bc.lh.r*.surf.niml.dset"
 FUNCPREFIX_rh=$PBNUM.${SUBJ}_${FUNCSESS}.rh.r*.$SOURCESTR.niml.dset #"pb03.CCpp2_CMRR6_unwarp_bc.rh.r*.surf.niml.dset"

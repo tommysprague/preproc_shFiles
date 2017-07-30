@@ -5,20 +5,22 @@
 
 
 ROOT="/deathstar/data/vRF_tcs"
-SUBJ="ZD"
+SUBJ="CC"
 SESS="RF1"
 vistaDir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 RFdir=$vistaDir/Inplane/Original   # where the RF files are saved, incl. nii.gz (raw)
 
-labels="VE phase ecc size exp x0 y0 b"
 
-declare -a RF_prefix=("RF_ss5") # "RF_pctDet_surf")
+declare -a RF_prefix=("RF_ss5" "RF_surf" "RF_bc") # "RF_pctDet_surf")
 declare -a RF_suffix=("gFit" "sFit" "fFit")
 
 for p in "${RF_prefix[@]}"; do
 
 
   for s in "${RF_suffix[@]}"; do
+
+    #TODO: if this file exists, use it, otherwise, use a default set (in comments below)
+    labels=`cat $RFdir/${p}-${s}_params.txt` #"VE phase ecc size exp x0 y0 b"
 
 
     # USE AFNI to load RF file, save a brik/head, label, convert to nii, delete intermed. files

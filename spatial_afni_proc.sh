@@ -1,9 +1,9 @@
 # AFNI, run unwarping, motion correction, etc
 
 SUBJ=CC
-SESS=Pri1
+SESS=RF6x
 
-EXPTDIR=Pri
+EXPTDIR=PrismaPilotScans
 
 cd /deathstar/data/$EXPTDIR/$SUBJ/$SESS/
 
@@ -11,10 +11,10 @@ cd /deathstar/data/$EXPTDIR/$SUBJ/$SESS/
 # no blurring (note: for CC...., add _fs6b after SUBJanat)
 afni_proc.py -subj_id ${SUBJ}_${SESS} \
              -dsets /deathstar/data/$EXPTDIR/$SUBJ/$SESS/run*_bc.nii.gz \
-             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
+             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat_fs6b/SUMA/brainmask.nii \
              -blocks align volreg \
              -volreg_align_e2a \
-             -volreg_base_ind 1 0 \
+             -volreg_base_ind 2 0 \
              -align_opts_aea -cost lpc+ZZ -giant_move \
              -blip_forward_dset blip_for1_bc.nii.gz  \
              -blip_reverse_dset blip_rev1_bc.nii.gz \
@@ -25,15 +25,15 @@ afni_proc.py -subj_id ${SUBJ}_${SESS} \
 
 # for surface blurring
 afni_proc.py -subj_id ${SUBJ}_${SESS} \
-             -dsets /deathstar/data/vRF_tcs/$SUBJ/$SESS/run*_bc.nii.gz \
-             -copy_anat /deathstar/data/vRF_tcs/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
+             -dsets /deathstar/data/$EXPTDIR/$SUBJ/$SESS/run*_bc.nii.gz \
+             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat_fs6b/SUMA/brainmask.nii \
              -blocks align volreg surf blur \
              -volreg_align_e2a \
-             -volreg_base_ind 0 0 \
+             -volreg_base_ind 4 0 \
              -align_opts_aea -cost lpc+ZZ -giant_move \
              -blur_size 5 \
-             -surf_anat /deathstar/data/vRF_tcs/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_SurfVol+orig \
-             -surf_spec /deathstar/data/vRF_tcs/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
+             -surf_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat_fs6b/SUMA/${SUBJ}anat_fs6b_SurfVol+orig \
+             -surf_spec /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat_fs6b/SUMA/${SUBJ}anat_fs6b_?h.spec \
              -blip_forward_dset blip_for1_bc.nii.gz  \
              -blip_reverse_dset blip_rev1_bc.nii.gz \
              -execute
