@@ -34,14 +34,14 @@
 
 
 
-ROOT=/deathstar/data/vRF_tcs
+ROOT=/deathstar/data/wmChoose_scanner
 SUBJ=CC
 ANATSUBJ=CCanat_fs6b
-FUNCSESS=RF1
+FUNCSESS=MGSMap25mm
 #FUNCSESS=RF1
 #FUNC=bar_width_1_pct
 FWHM=5
-CORES=8
+CORES=12
 
 TR=1.2   # TODO: figure out how to get this dynamically per run (hard w/ parallel command...)
 

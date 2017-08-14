@@ -11,7 +11,7 @@ vistaDir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 RFdir=$vistaDir/Inplane/Original   # where the RF files are saved, incl. nii.gz (raw)
 
 
-declare -a RF_prefix=("RF_ss5" "RF_surf" "RF_bc") # "RF_pctDet_surf")
+declare -a RF_prefix=("RF_comb_bc" "RF_comb_ss5" "RF_comb_surf") # "RF_ss5" "RF_surf") # "RF_pctDet_surf")
 declare -a RF_suffix=("gFit" "sFit" "fFit")
 
 for p in "${RF_prefix[@]}"; do
@@ -26,7 +26,7 @@ for p in "${RF_prefix[@]}"; do
     # USE AFNI to load RF file, save a brik/head, label, convert to nii, delete intermed. files
 
     # copy as BRIK/HEAD
-    3dcopy $RFdir/${p}-${s}.nii.gz $RFdir/${p}-${s}
+    3dcopy $RFdir/${p}-${s}.nii.gz $RFdir/${p}-${s}+orig
 
     # apply "labels" to each brik (should probably check right # of briks, etc...)
     3drefit -relabel_all_str "$labels" $RFdir/${p}-${s}+orig

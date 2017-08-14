@@ -29,12 +29,12 @@ FWHM=0          # spatial smoothing (mm)
 REWINDTRS=0     # number of TRs to end of rewind
 ###############################################################################
 
-ROOT="/deathstar/data/PrismaPilotScans"
+ROOT="/deathstar/data/wmChoose_scanner"
 SUBJ="CC"
 
 
 
-declare -a SESSIONS=("MGSMap6")
+declare -a SESSIONS=("MGSMap25mm")
 
 # get in the right directory - root directory of a given subj
 cd $ROOT/$SUBJ
@@ -142,8 +142,8 @@ for s in "${SESSIONS[@]}"; do
                -inset $s/func_volreg_normPctDet{}.nii.gz
 
 
-
-
+    # save out a set of volumes depicting the mean (to comapre residual distortions)
+    3dTcat -prefix $s/${SUBJ}_${s}_meanruns.nii.gz func_volreg_mean*.nii.gz
 
 
 done

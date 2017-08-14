@@ -1,6 +1,6 @@
 # bias_correct.sh
 
-cd /deathstar/data/vRF_tcs/CC/RF1/
+cd /deathstar/data/wmChoose_scanner/CC/MGSMap25mm/
 
 FUNCPREFIX=run
 BLIPPREFIX=blip_

@@ -29,12 +29,12 @@ FWHM=0          # spatial smoothing (mm)
 REWINDTRS=0     # number of TRs to end of rewind
 ###############################################################################
 
-ROOT="/deathstar/data/PrismaPilotScans"
+ROOT="/deathstar/data/wmChoose_scanner"
 SUBJ="CC"
 
 
 
-declare -a SESSIONS=("MGSMap6S")
+declare -a SESSIONS=("MGSMap25mm")
 
 # get in the right directory - root directory of a given subj
 cd $ROOT/$SUBJ
@@ -54,7 +54,7 @@ for s in "${SESSIONS[@]}"; do
 
     # COPY BRIK/HEAD to nii/gz in super-directory
     cat ./list.txt | parallel -P $CORES \
-    3dcopy $s/${FUNCPRE}{}${FUNCSUF} $s/func{}_volreg.nii.gz
+    3dcopy $s/${FUNCPRE}{}${FUNCSUF} $s/surf{}_volreg.nii.gz
 
 
 
@@ -62,33 +62,33 @@ for s in "${SESSIONS[@]}"; do
 
     # Linear detrend (for  mean estimation)
     cat ./list.txt | parallel -P $CORES \
-    3dDetrend -prefix $s/func_tmp_det{}.nii.gz\
-              -polort 1 $s/func{}_volreg.nii.gz
+    3dDetrend -prefix $s/surf_tmp_det{}.nii.gz\
+              -polort 1 $s/surf{}_volreg.nii.gz
 
     cat ./list.txt | parallel -P $CORES \
-    3dTstat -prefix $s/func_tmp_mean{}.nii.gz \
-            -mean $s/func{}_volreg.nii.gz
+    3dTstat -prefix $s/surf_tmp_mean{}.nii.gz \
+            -mean $s/surf{}_volreg.nii.gz
 
     cat ./list.txt | parallel -P $CORES \
-    3dTstat -prefix $s/func_tmp_detMean{}.nii.gz \
-            -mean $s/func_tmp_det{}.nii.gz
+    3dTstat -prefix $s/surf_tmp_detMean{}.nii.gz \
+            -mean $s/surf_tmp_det{}.nii.gz
 
     cat ./list.txt | parallel -P $CORES \
-    3dcalc -prefix $s/func_volreg_detrend{}.nii.gz \
-           -a $s/func_tmp_det{}.nii.gz \
-           -b $s/func_tmp_mean{}.nii.gz \
-           -c $s/func_tmp_detMean{}.nii.gz \
+    3dcalc -prefix $s/surf_volreg_detrend{}.nii.gz \
+           -a $s/surf_tmp_det{}.nii.gz \
+           -b $s/surf_tmp_mean{}.nii.gz \
+           -c $s/surf_tmp_detMean{}.nii.gz \
            -expr "'a+b-c'"
 
-    rm $s/*func_tmp*
+    rm $s/*surf_tmp*
 
     ## here, we're left with linear-detrended data at its original mean
 
 
     ## Voxel-wise mean over timeseries (this is identical tot he tmp-mean file removed above...)
     cat ./list.txt | parallel -P $CORES \
-    3dTstat -prefix $s/func_volreg_mean{}.nii.gz \
-            -mean $s/func_volreg_detrend{}.nii.gz
+    3dTstat -prefix $s/surf_volreg_mean{}.nii.gz \
+            -mean $s/surf_volreg_detrend{}.nii.gz
 
     # skullstrip each (note: this looked like it was missing some brain for KD); default -clfrac 0.5
 #    cat ./list.txt | parallel -P $CORES \
@@ -135,9 +135,9 @@ for s in "${SESSIONS[@]}"; do
 
     # percent signal change - computed w/ detrended rather than hi-pass'd data; also remove 1
     cat ./list.txt | parallel -P $CORES \
-    3dcalc -prefix $s/func_volreg_normPctDet{}.nii.gz \
-           -a $s/func_volreg_detrend{}.nii.gz \
-           -b $s/func_volreg_mean{}.nii.gz \
+    3dcalc -prefix $s/surf_volreg_normPctDet{}.nii.gz \
+           -a $s/surf_volreg_detrend{}.nii.gz \
+           -b $s/surf_volreg_mean{}.nii.gz \
            -c surfanat_brainmask_master_RAI.nii.gz \
            -expr "'((a/b)) * ispositive(c) * 100 - 100*ispositive(b)'" \
            -overwrite
@@ -147,10 +147,10 @@ for s in "${SESSIONS[@]}"; do
 
     # ensure we're in RAI - otherwise vista, etc, get pissed
     cat ./list.txt | parallel -P $CORES \
-    3dresample -prefix $s/func_volreg_normPctDet{}.nii.gz \
+    3dresample -prefix $s/surf_volreg_normPctDet{}.nii.gz \
                -orient rai \
                -overwrite  \
-               -inset $s/func_volreg_normPctDet{}.nii.gz
+               -inset $s/surf_volreg_normPctDet{}.nii.gz
 
 
 
