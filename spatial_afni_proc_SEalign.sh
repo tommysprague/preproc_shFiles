@@ -64,15 +64,17 @@ afni_proc.py -subj_id $RESULTSDIR \
 
 # -dsets /deathstar/data/$EXPTDIR/$SUBJ/$SESS/run{$STARTRUN..$ENDRUN}_bc.nii.gz \
 
+# must make STARTRUN; ENDRUN base10...$((10#$STARTRUN))
+
 # loop from end to beginning of run list, converting all r## (1-n) to startrun:endrun
-runidx=$(( $ENDRUN - $STARTRUN + 1 ))
-for (( i=$ENDRUN; i>=$STARTRUN; i-- ))
+runidx=$(( $((10#$ENDRUN)) - $((10#$STARTRUN)) + 1 ))
+for (( i=$((10#$ENDRUN)); i>=$((10#$STARTRUN)); i-- ))
 do
+  echo Renaming run $runidx to run $i
 
 # perl rename str
   repstr=s/`printf "r%02.f" $runidx`/`printf "r%02.f" $i`/
   rename $repstr `printf "$RESULTSDIR.results/*.r%02.f.*" $runidx`
-  echo Renaming run $runidx to run $i
   #echo `printf "$RESULTSDIR/*.r%02.f.*" $runidx`
   runidx=$(( $runidx - 1 ))
 done
