@@ -3,16 +3,16 @@
 # NOTE: moved a bunch of other calls to misc_afni_proc.sh
 
 SUBJ=CC
-SESS=MGSMap1
+SESS=RF1
 
-EXPTDIR=wmChoose_scanner
+EXPTDIR=vRF_tcs
 
-STARTRUN=5
-ENDRUN=8
+STARTRUN=05
+ENDRUN=08
 
 cd /deathstar/data/$EXPTDIR/$SUBJ/$SESS/
 
-SEtarg=2   # which scan (blip pair) is the spin-echo target
+SEtarg=2  # which scan (blip pair) is the spin-echo target
 
 # for now, use the first as the target
 # trying out making a spin-echo target for moco/alignment
@@ -42,9 +42,8 @@ afni_proc.py -subj_id SEtarget$SEtarg \
 # this means both EPI-->EPI moco registration and EPI-->anat anat registration will occur on this image
 # (so we'll need to carefully check the EPI/EPI and anat/EPI alignment...)
 
+# where do we put results?
 RESULTSDIR=${SUBJ}_${SESS}_r${STARTRUN}to${ENDRUN}_SEalign
-
-
 
 # no blurring (note: for CC...., add _fs6b after SUBJanat)
 afni_proc.py -subj_id $RESULTSDIR \
@@ -59,6 +58,10 @@ afni_proc.py -subj_id $RESULTSDIR \
              -blip_reverse_dset blip_rev${SEtarg}_bc.nii.gz \
              -execute
 
+
+
+
+
 # -dsets /deathstar/data/$EXPTDIR/$SUBJ/$SESS/run{$STARTRUN..$ENDRUN}_bc.nii.gz \
 
 # loop from end to beginning of run list, converting all r## (1-n) to startrun:endrun
@@ -67,12 +70,23 @@ for (( i=$ENDRUN; i>=$STARTRUN; i-- ))
 do
 
 # perl rename str
-  repstr=s/`printf "q%02.f" $runidx`/`printf "r%02.f" $i`/
-  rename $repstr `printf "$RESULTSDIR/*.r%02.f.*" $runidx`
-  echo $repstr
+  repstr=s/`printf "r%02.f" $runidx`/`printf "r%02.f" $i`/
+  rename $repstr `printf "$RESULTSDIR.results/*.r%02.f.*" $runidx`
+  echo Renaming run $runidx to run $i
+  #echo `printf "$RESULTSDIR/*.r%02.f.*" $runidx`
   runidx=$(( $runidx - 1 ))
 done
 
+
+# make QC files ($SUBJ/align_QC/$SUBJ_$SESS_mu_r$i.nii.gz)
+
+mkdir ../align_QC
+
+for ii in $(seq -s " " $STARTRUN $ENDRUN)
+do
+  rnum=$(printf "%02.f" $ii)
+  3dTstat -mean -prefix ../align_QC/${SUBJ}_${SESS}_mu_r$rnum.nii.gz $RESULTSDIR.results/pb02.$RESULTSDIR.r$rnum.volreg+orig
+done
 
 # examples of using parallel w/ multiple columns of arguments from file-C regexp
 #Column separator. The input will be treated as a table with regexp separating the columns. The n'th column can be access using {n} or {n.}. E.g. {3} is the 3rd column.
