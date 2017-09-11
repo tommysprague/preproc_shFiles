@@ -2,23 +2,27 @@
 
 # NOTE: moved a bunch of other calls to misc_afni_proc.sh
 
-SUBJ=CC
+SUBJ=KD
 SESS=RF1
 
 EXPTDIR=vRF_tcs
 
-STARTRUN=05
-ENDRUN=08
+STARTRUN=01
+ENDRUN=04
+
+SEtarg=1  # which scan (blip pair) is the spin-echo target
+
+
+BLURAMT=5
 
 cd /deathstar/data/$EXPTDIR/$SUBJ/$SESS/
 
-SEtarg=2  # which scan (blip pair) is the spin-echo target
 
 # for now, use the first as the target
 # trying out making a spin-echo target for moco/alignment
 afni_proc.py -subj_id SEtarget$SEtarg \
              -dsets /deathstar/data/$EXPTDIR/$SUBJ/$SESS/blip_for*_bc.nii.gz \
-             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat_fs6b/SUMA/brainmask.nii \
+             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
              -blocks  volreg \
              -volreg_base_ind $SEtarg 0 \
              -blip_forward_dset blip_for${SEtarg}_bc.nii.gz  \
@@ -45,20 +49,43 @@ afni_proc.py -subj_id SEtarget$SEtarg \
 # where do we put results?
 RESULTSDIR=${SUBJ}_${SESS}_r${STARTRUN}to${ENDRUN}_SEalign
 
+
+
+if [ $BLURAMT = 0 ]
+then
+
 # no blurring (note: for CC...., add _fs6b after SUBJanat)
 afni_proc.py -subj_id $RESULTSDIR \
              -dsets $(printf "/deathstar/data/$EXPTDIR/$SUBJ/$SESS/run%02.f_bc.nii.gz " `seq -s " " $STARTRUN $ENDRUN`) \
-             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat_fs6b/SUMA/brainmask.nii \
-             -blocks align volreg \
+             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
+             -blocks align volreg surf \
              -volreg_align_e2a \
              -volreg_base_dset SEtarget$SEtarg.nii.gz \
              -anat_has_skull no \
              -align_opts_aea -cost lpc+ZZ -giant_move \
+             -surf_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_SurfVol+orig \
+             -surf_spec /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
              -blip_forward_dset blip_for${SEtarg}_bc.nii.gz  \
              -blip_reverse_dset blip_rev${SEtarg}_bc.nii.gz \
              -execute
 
+else
 
+  afni_proc.py -subj_id $RESULTSDIR \
+               -dsets $(printf "/deathstar/data/$EXPTDIR/$SUBJ/$SESS/run%02.f_bc.nii.gz " `seq -s " " $STARTRUN $ENDRUN`) \
+               -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
+               -blocks align volreg surf blur \
+               -volreg_align_e2a \
+               -volreg_base_dset SEtarget$SEtarg.nii.gz \
+               -anat_has_skull no \
+               -align_opts_aea -cost lpc+ZZ -giant_move \
+               -surf_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_SurfVol+orig \
+               -surf_spec /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
+               -blur_size $BLURAMT \
+               -blip_forward_dset blip_for${SEtarg}_bc.nii.gz  \
+               -blip_reverse_dset blip_rev${SEtarg}_bc.nii.gz \
+               -execute
+fi
 
 
 
