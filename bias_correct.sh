@@ -1,10 +1,10 @@
 # bias_correct.sh
 
-cd /deathstar/data/vRF_tcs/KD/RF1/
+cd /deathstar/data/wmChoose_scanner/CC/MGSMap25mm_MB4/
 
 FUNCPREFIX=run
 BLIPPREFIX=blip_
-CORES=12
+CORES=10
 
 # mask, then add 1 where bias field == 0 (because we divide by this)
 3dAutomask -prefix head_mask.nii.gz -clfrac 0.3 -overwrite head_receive_field.nii.gz

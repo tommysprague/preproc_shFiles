@@ -34,7 +34,7 @@ SUBJ="CC"
 
 
 
-declare -a SESSIONS=("MGSMap25mm")
+declare -a SESSIONS=("MGSMap25mm_MB4")
 
 # get in the right directory - root directory of a given subj
 cd $ROOT/$SUBJ
@@ -128,7 +128,7 @@ for s in "${SESSIONS[@]}"; do
     # make sure there's a RAI "mask" file (TODO: use a cortex mask; get orientation from file!)
     3dresample -prefix surfanat_brainmask_master_RAI.nii.gz \
                -orient rai \
-               -inset surfanat_brainmask_master.nii.gz
+               -inset surfanat_brainmask_master_25mm.nii.gz
 
 
 

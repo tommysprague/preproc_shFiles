@@ -5,7 +5,7 @@
 
 
 ROOT="/deathstar/data/vRF_tcs"
-SUBJ="ZD"
+SUBJ="KD"
 SESS="RF1"
 vistaDir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 RFdir=$vistaDir/Inplane/Original   # where the RF files are saved, incl. nii.gz (raw)
