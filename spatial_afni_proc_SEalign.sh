@@ -2,18 +2,18 @@
 
 # NOTE: moved a bunch of other calls to misc_afni_proc.sh
 
-SUBJ=CC
-SESS=MGSMap25mm_MB4
+SUBJ=EK
+SESS=RF1
 
-EXPTDIR=wmChoose_scanner
+EXPTDIR=vRF_tcs
 
-STARTRUN=09
+STARTRUN=10
 ENDRUN=10
 
-SEtarg=5  # which scan (blip pair) is the spin-echo target
+SEtarg=6  # which scan (blip pair) is the spin-echo target
 
 
-BLURAMT=0
+BLURAMT=5
 
 cd /deathstar/data/$EXPTDIR/$SUBJ/$SESS/
 
@@ -105,9 +105,9 @@ for (( i=$((10#$ENDRUN)); i>=$((10#$STARTRUN)); i-- ))
 do
   echo Renaming run $runidx to run $i
 
-# perl rename str
-  repstr=s/`printf "r%02.f" $runidx`/`printf "r%02.f" $i`/
-  rename $repstr `printf "$RESULTSDIR.results/*.r%02.f.*" $runidx`
+# perl rename str   # rename -n -v 's/\.r02.(.*.)\./.r03.$1./' *.suff
+  repstr=s/`printf "\.r%02.f.(.*.)\." $runidx`/`printf ".r%02.f." $i`'$1'./
+  rename -v $repstr `printf "$RESULTSDIR.results/*.r%02.f.*" $runidx`
   #echo `printf "$RESULTSDIR/*.r%02.f.*" $runidx`
   runidx=$(( $runidx - 1 ))
 done

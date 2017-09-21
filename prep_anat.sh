@@ -5,9 +5,9 @@
 #
 # Requires a pre-processed file already (need to sample on that grid)
 
-EXPTDIR=/deathstar/data/wmChoose_scanner
+EXPTDIR=/deathstar/data/vRF_tcs
 
-SUBJ=CC
+SUBJ=EK
 ANATSUBJ=${SUBJ}anat
 
 # make symlink to freesurfer directory
@@ -18,12 +18,13 @@ ln -s $SUBJECTS_DIR/$ANATSUBJ $EXPTDIR/$SUBJ/$ANATSUBJ
 # make surfanat files in $EXPTDIR/$SUBJ
 
 #PREPROC_DIR=$(ls -d $EXPTDIR/$SUBJ/*/${SUBJ}_*r*_SEalign.results | head -1)
-PREPROC_DIR=$(ls -d $EXPTDIR/$SUBJ/MGSMap25mm_MB4/${SUBJ}_*r*_SEalign.results | head -1)
+PREPROC_DIR=$(ls -d $EXPTDIR/$SUBJ/RF1/${SUBJ}_*r*_SEalign.results | head -1)
 PREPROC_IMG=$(ls $PREPROC_DIR/pb02.*.volreg+orig.BRIK | head -1)
 
-#3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz -master $PREPROC_IMG -rmode Cu -inset $SUBJECTS_DIR/$ANATSUBJ/SUMA/brainmask.nii
-3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_master_25mm.nii.gz -master $PREPROC_IMG -rmode Cu -inset $SUBJECTS_DIR/$ANATSUBJ/SUMA/brainmask.nii
-#3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_hires.nii.gz -dxyz 1.0 1.0 2.0 -rmode Cu -orient RAI -inset $EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz
+3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz -master $PREPROC_IMG -rmode Cu -inset $SUBJECTS_DIR/$ANATSUBJ/SUMA/brainmask.nii
+#3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_master_25mm.nii.gz -master $PREPROC_IMG -rmode Cu -inset $SUBJECTS_DIR/$ANATSUBJ/SUMA/brainmask.nii
+3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_hires.nii.gz -dxyz 1.0 1.0 2.0 -rmode Cu -orient RAI -inset $EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz
+#3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_hires_25mm.nii.gz -dxyz 1.25 1.25 2.5 -rmode Cu -orient RAI -inset $EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz
 
 
 

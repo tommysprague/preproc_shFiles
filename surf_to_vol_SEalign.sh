@@ -35,18 +35,18 @@
 
 
 
-ROOT=/deathstar/data/wmChoose_scanner
+ROOT=/deathstar/data/vRF_tcs
 SUBJ=CC
-FUNCSESS=MGSMap25mm_MB4
+FUNCSESS=RF25mm
 
 ANATSUBJ=${SUBJ}anat
 
 
 
 FWHM=5
-CORES=10
+CORES=8
 
-TR=1.2   # TODO: figure out how to get this dynamically per run (hard w/ parallel command...)
+TR=0.75   # TODO: figure out how to get this dynamically per run (hard w/ parallel command...)
 
 # TODO: loop over funcsess (also, loop over _ss5/_surf files as sensically as possible...)
 
@@ -54,9 +54,9 @@ TR=1.2   # TODO: figure out how to get this dynamically per run (hard w/ paralle
 ALL_PREPROC_DIR=$(ls -d $ROOT/$SUBJ/$FUNCSESS/${SUBJ}_${FUNCSESS}*.results)
 
 # OR ss5
-FUNCSUFFIX=surf  # when saving (bar_widht_1_XXX), what to use? usually surf or ss$FWHM
-SOURCESTR=surf   # pb0X.$SOURCESTR.niml.dset (typically blur or surf)
-PBNUM=pb03       # pb03, surf OR pb04, blur
+FUNCSUFFIX=ss5  # when saving (bar_widht_1_XXX), what to use? usually surf or ss$FWHM
+SOURCESTR=blur   # pb0X.$SOURCESTR.niml.dset (typically blur or surf)
+PBNUM=pb04       # pb03, surf OR pb04, blur
 
 #FUNCPREFIX_lh=$PBNUM.${SUBJ}_${FUNCSESS}*.lh.r*.$SOURCESTR.niml.dset #"pb03.CCpp2_CMRR6_unwarp_bc.lh.r*.surf.niml.dset"
 #FUNCPREFIX_rh=$PBNUM.${SUBJ}_${FUNCSESS}*.rh.r*.$SOURCESTR.niml.dset #"pb03.CCpp2_CMRR6_unwarp_bc.rh.r*.surf.niml.dset"
