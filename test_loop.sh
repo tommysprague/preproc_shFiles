@@ -1,6 +1,13 @@
-EXPTDIR=/deathstar/data/vRF_tcs
-SUBJ=CC
-SESS=RF25mm
+#!/bin/bash
+
+
+
+
+EXPTDIR=$1 #/deathstar/data/vRF_tcs
+SUBJ=$2 #CC
+SESS=$3 #RF25mm
+
+echo $4
 
 cat $EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | while read line
 do

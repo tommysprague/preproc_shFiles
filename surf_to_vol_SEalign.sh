@@ -1,3 +1,11 @@
+#!/bin/bash
+
+# run like
+# surf_to_vol_SEalign.sh vRF_tcs CC RF1 blur 5
+# -OR
+# surf_to_vol_SEalign.sh vRF_tcs CC RF1 surf
+
+
 # smooth on the SUMA surface
 #
 # adapted from surfsmooth.sh, from KD
@@ -33,44 +41,55 @@
 
 
 
+DATAROOT=/deathstar/data
 
+#ROOT=/deathstar/data/vRF_tcs
+EXPTDIR=$1
 
-ROOT=/deathstar/data/vRF_tcs
-SUBJ=CC
-FUNCSESS=RF25mm
+ROOT=$DATAROOT/$EXPTDIR
+
+SUBJ=$2
+FUNCSESS=$3
 
 ANATSUBJ=${SUBJ}anat
 
+#TR=$4   # TODO: figure out how to get this dynamically per run (hard w/ parallel command...)
+SOURCESTR=$4
 
 
-FWHM=5
-CORES=8
 
-TR=0.75   # TODO: figure out how to get this dynamically per run (hard w/ parallel command...)
+FWHM=$5
+#CORES=8
 
-# TODO: loop over funcsess (also, loop over _ss5/_surf files as sensically as possible...)
 
 
 ALL_PREPROC_DIR=$(ls -d $ROOT/$SUBJ/$FUNCSESS/${SUBJ}_${FUNCSESS}*.results)
 
 # OR ss5
-FUNCSUFFIX=ss5  # when saving (bar_widht_1_XXX), what to use? usually surf or ss$FWHM
-SOURCESTR=blur   # pb0X.$SOURCESTR.niml.dset (typically blur or surf)
-PBNUM=pb04       # pb03, surf OR pb04, blur
+if [[ $SOURCESTR = blur ]]; then
+  #statements
+  PBNUM=pb04
+  FUNCSUFFIX=ss$FWHM
+elif [[ $SOURCESTR = surf ]]; then
+  #statements
+  PBNUM=pb03
+  FUNCSUFFIX=surf
+fi
 
-#FUNCPREFIX_lh=$PBNUM.${SUBJ}_${FUNCSESS}*.lh.r*.$SOURCESTR.niml.dset #"pb03.CCpp2_CMRR6_unwarp_bc.lh.r*.surf.niml.dset"
-#FUNCPREFIX_rh=$PBNUM.${SUBJ}_${FUNCSESS}*.rh.r*.$SOURCESTR.niml.dset #"pb03.CCpp2_CMRR6_unwarp_bc.rh.r*.surf.niml.dset"
+
+
+
+#FUNCSUFFIX=ss5  # when saving (bar_widht_1_XXX), what to use? usually surf or ss$FWHM
+#SOURCESTR=blur   # pb0X.$SOURCESTR.niml.dset (typically blur or surf)
+#PBNUM=pb04       # pb03, surf OR pb04, blur
+
 FUNCPREFIX_lh=$ROOT/$SUBJ/$FUNCSESS/${SUBJ}_${FUNCSESS}*.results/$PBNUM.${SUBJ}_${FUNCSESS}*.lh.r*.$SOURCESTR.niml.dset
 FUNCPREFIX_rh=$ROOT/$SUBJ/$FUNCSESS/${SUBJ}_${FUNCSESS}*.results/$PBNUM.${SUBJ}_${FUNCSESS}*.rh.r*.$SOURCESTR.niml.dset
 
 
-# loop over ALL_PREPROC_DIR
-#for PREPROC_DIR in $ALL_PREPROC_DIR
-#do
 
 FUNCPREFIX=${SUBJ}_${FUNCSESS} #"pb04.CCpp2_CMRR4_unwarp_ss.lh.r03.blur.niml.dset"
 
-#cd $PREPROC_DIR
 
 cd $ROOT/$SUBJ/$FUNCSESS
 
@@ -97,6 +116,13 @@ rm $ROOT/$SUBJ/$FUNCSESS/func_list.txt; for FUNC in $(cat run_list.txt); do prin
 # move a volreg run (pb02) to FUNCSESS, rename appropriately`
 #3dcopy $PREPROC_DIR/pb02.${SUBJ}_${FUNCSESS}.r01.volreg+orig $ROOT/$SUBJ/$FUNCSESS/${FUNCPREFIX}_r01.nii.gz
 3dcopy $(ls $ROOT/$SUBJ/$FUNCSESS/${SUBJ}_${FUNCSESS}*.results/pb02.${SUBJ}_${FUNCSESS}*.r01.volreg+orig* | head -1) $ROOT/$SUBJ/$FUNCSESS/${FUNCPREFIX}_r01.nii.gz
+
+TR=$(3dinfo -tr $ROOT/$SUBJ/$FUNCSESS/${FUNCPREFIX}_r01.nii.gz)
+
+
+# how many runs? that's how many cores we want
+CORES=$(cat $ROOT/$SUBJ/$FUNCSESS/func_list.txt | wc -l)
+
 
 cd $ROOT/$SUBJ
 
@@ -129,19 +155,6 @@ cat ./$FUNCSESS/func_list_rh.txt | parallel -P $CORES -C / \
 -sdata  ./${FUNCSESS}/{-2}/{-1}.$SOURCESTR.niml.dset
 
 
-#
-# cat ./$FUNCSESS/func_list_rh.txt | parallel -P $CORES \
-# 3dSurf2Vol \
-# -spec ./${ANATSUBJ}/SUMA/${ANATSUBJ}_rh.spec \
-# -surf_A smoothwm \
-# -surf_B pial \
-# -sv ./${ANATSUBJ}/SUMA/${ANATSUBJ}_SurfVol+orig. \
-# -grid_parent ./${FUNCSESS}/${FUNCPREFIX}_r01.nii.gz \
-# -map_func ave \
-# -f_steps 10 \
-# -prefix ./${FUNCSESS}/{}_$FUNCSUFFIX.nii.gz \
-# -sdata $PREPROC_DIR/{}.$SOURCESTR.niml.dset
-
 
 # RENAME THEM TO SOMETHING SENSICAL
 # TODO: figure out how to dynamically change pb03/pb04?
@@ -169,5 +182,3 @@ done
 # finally, put them in RAI (preferred by vista; all ROIs in this orientation)
 cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
 3dresample -overwrite -prefix ./${FUNCSESS}/{}_$FUNCSUFFIX.nii.gz -orient rai -inset ./${FUNCSESS}/{}_$FUNCSUFFIX.nii.gz
-
-#done
