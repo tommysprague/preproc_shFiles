@@ -38,7 +38,7 @@ cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
 # LOOP OVER LINES IN SUBJ_SESS_SEtargets.txt - this should contain the SE targ, startrun, and endrun in that order on each line
 
 
-cat $EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | while read line
+cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | while read line
 do
 
 
@@ -53,7 +53,7 @@ do
 
 
 
-  cd /deathstar/data/$EXPTDIR/$SUBJ/$SESS/
+  cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
   mkdir $DATAROOT/$EXPTDIR/$SUBJ/align_QC
 
   #NOTE: below, if the slice position is such that 'brainmask' ended up recentered relative ot blip images (if blip images are far superior, for example)

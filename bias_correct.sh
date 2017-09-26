@@ -1,10 +1,15 @@
+#!/bin/bash
 # bias_correct.sh
 
-cd /deathstar/data/vRF_tcs/EK/RF1/
+DATAROOT=/deathstar/data
+EXPTDIR=$1
+SUBJ=$2
+SESS=$3
+
+cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS
 
 FUNCPREFIX=run
 BLIPPREFIX=blip_
-CORES=10
 
 # mask, then add 1 where bias field == 0 (because we divide by this)
 3dAutomask -prefix head_mask.nii.gz -clfrac 0.3 -overwrite head_receive_field.nii.gz
@@ -25,9 +30,13 @@ CORES=10
 rm ./bc_func_list.txt; for FUNC in ${FUNCPREFIX}*.nii; do printf "%s\n" $FUNC | cut -f -1 -d . >> ./bc_func_list.txt; done
 rm ./bc_blip_list.txt; for BLIP in ${BLIPPREFIX}*.nii; do printf "%s\n" $BLIP | cut -f -1 -d . >> ./bc_blip_list.txt; done
 
+
+CORES=$(cat ./bc_func_list.txt | wc -l)
+
 # then apply to the scan(s) we want
 cat ./bc_func_list.txt | parallel -P $CORES \
 3dcalc -a {}.nii -b bias_al.nii.gz -c mask_al.nii.gz -prefix {}_bc.nii.gz -expr "'c*(a/b)'" -overwrite
 
+CORES=$(cat ./bc_blip_list.txt | wc -l)
 cat ./bc_blip_list.txt | parallel -P $CORES \
 3dcalc -a {}.nii -b bias_al.nii.gz -c mask_al.nii.gz -prefix {}_bc.nii.gz -expr "'c*(a/b)'" -overwrite
