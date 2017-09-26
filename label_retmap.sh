@@ -6,12 +6,12 @@
 
 ROOT="/deathstar/data/vRF_tcs"
 SUBJ="CC"
-SESS="RF1"
+SESS="RF25mm"
 vistaDir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 RFdir=$vistaDir/Inplane/Original   # where the RF files are saved, incl. nii.gz (raw)
 
 
-declare -a RF_prefix=("RF_comb_bc" "RF_comb_ss5" "RF_comb_surf") # "RF_ss5" "RF_surf") # "RF_pctDet_surf")
+declare -a RF_prefix=("RF_bc" "RF_ss5" "RF_surf") # "RF_ss5" "RF_surf") # "RF_pctDet_surf")
 declare -a RF_suffix=("gFit" "sFit" "fFit")
 
 for p in "${RF_prefix[@]}"; do

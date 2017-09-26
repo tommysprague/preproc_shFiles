@@ -34,7 +34,7 @@ SUBJ="CC"
 
 
 
-declare -a SESSIONS=("MGSMap25mm")
+declare -a SESSIONS=("MGSMap25mm_MB4")
 
 # get in the right directory - root directory of a given subj
 cd $ROOT/$SUBJ
@@ -42,19 +42,19 @@ cd $ROOT/$SUBJ
 #for ((s=fSES;s<=SESS;s++)); do
 for s in "${SESSIONS[@]}"; do
 
-    FUNCPRE="pb02.${SUBJ}_${s}.r"
+    FUNCPRE="pb02.${SUBJ}_${s}*.r"
     FUNCSUF=".volreg+orig.BRIK"
     #FUNCSTR="pb02.${SUBJ}_${s}.r*.volreg+orig.BRIK"
 
     ## set number of runs for current session
     #RUN=`ls -l $s/raw/*func* | wc -l`
-    RUN=`ls -l $s/${SUBJ}_${s}.results/${FUNCPRE}*${FUNCSUF} | wc -l`
+    RUN=`ls -l $s/${SUBJ}_${s}*.results/${FUNCPRE}*${FUNCSUF} | wc -l`
     rm ./list.txt; for ((i=1;i<=RUN;i++)); do printf "%02.f\n" $i >> ./list.txt; done
 
 
     # COPY BRIK/HEAD to nii/gz in super-directory
     cat ./list.txt | parallel -P $CORES \
-    3dcopy $s/${SUBJ}_${s}.results/${FUNCPRE}{}${FUNCSUF} $s/func{}_volreg.nii.gz
+    3dcopy $s/${SUBJ}_${s}*_SEalign.results/${FUNCPRE}{}${FUNCSUF} $s/func{}_volreg.nii.gz
 
 
 
@@ -130,7 +130,7 @@ for s in "${SESSIONS[@]}"; do
     3dcalc -prefix $s/func_volreg_normPctDet{}.nii.gz \
            -a $s/func_volreg_detrend{}.nii.gz \
            -b $s/func_volreg_mean{}.nii.gz \
-           -c surfanat_brainmask_master.nii.gz \
+           -c surfanat_brainmask_master_25mm.nii.gz \
            -expr "'((a/b)-1) * ispositive(c) * 100'"
 
 
@@ -143,7 +143,7 @@ for s in "${SESSIONS[@]}"; do
 
 
     # save out a set of volumes depicting the mean (to comapre residual distortions)
-    3dTcat -prefix $s/${SUBJ}_${s}_meanruns.nii.gz func_volreg_mean*.nii.gz
+    3dTcat -prefix $s/${SUBJ}_${s}_meanruns.nii.gz $s/func_volreg_mean*.nii.gz
 
 
 done

@@ -1,14 +1,33 @@
-ROOT=/deathstar/data/PrismaPilotScans
-SUBJ=CC
-SESS=CMRR_S4
+# take 1D ROIs (surface) saved somewhere, project them into volume of a given scan
+# (typically not necessary; this is mostly for prisma tests)
 
-AnatSUBJ=CCanat_fs6b
+
+
+
+ROOT=/deathstar/data/wmChoose_scanner
+
+
+SUBJ=CC
+SESS=MGSMap25mm_MB4
+
+AnatSUBJ=${SUBJ}anat
+
+
+ROILOC=/deathstar/data/vRF_tcs/CC/RF1/CC_RF1_vista/roi
+
+ROIDEST=$ROOT/$SUBJ/rois
+mkdir $ROIDEST
+
 
 TR=1 # null value for nifti squeeze
 
-GridParent=bar_width_1_bc_ss5.nii.gz
+#GridParent=/deathstar/data/wmChoose_scanner/CC/MGSMap25mm_MB4/CC_MGSMap25mm_MB4_bar_width_1_bc_ss5.nii.gz
+GridParent=$ROOT/$SUBJ/surfanat_brainmask_master_RAI.nii.gz
 
-cd $ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
+
+cd $ROILOC
+cd ..
+#cd $ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 
 declare -a HEMIS=("lh" "rh")
 
@@ -32,12 +51,12 @@ for r in roi/*1D.roi;do
     -surf_A smoothwm \
     -surf_B pial \
     -sv $ROOT/$SUBJ/$AnatSUBJ/SUMA/${AnatSUBJ}_SurfVol+orig. \
-    -grid_parent $ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista/$GridParent \
+    -grid_parent $GridParent \
     -map_func mode \
     -f_steps 15 \
     -sdata_1D $r \
     -sxyz_orient_as_gpar                                  \
-    -prefix roi/$hemi.${area}.nii.gz \
+    -prefix $ROIDEST/$hemi.${area}.nii.gz \
     -overwrite
 
 # sxyz_orient_as_gpar shoudl give better orientation?
@@ -56,8 +75,8 @@ done
 # look for V2v/V2d in each hemisphere and combine them
 #for s in "${SESSIONS[@]}"; do
 for h in "${HEMIS[@]}"; do
-  3dcalc -prefix roi/$h.V2.nii.gz -overwrite -a roi/$h.V2v.nii.gz -b roi/$h.V2d.nii.gz -expr 'or(ispositive(a),ispositive(b))'
-  3dcalc -prefix roi/$h.V3.nii.gz -overwrite -a roi/$h.V3v.nii.gz -b roi/$h.V3d.nii.gz -expr 'or(ispositive(a),ispositive(b))'
+  3dcalc -prefix $ROIDEST/$h.V2.nii.gz -overwrite -a $ROIDEST/$h.V2v.nii.gz -b $ROIDEST/$h.V2d.nii.gz -expr 'or(ispositive(a),ispositive(b))'
+  3dcalc -prefix $ROIDEST/$h.V3.nii.gz -overwrite -a $ROIDEST/$h.V3v.nii.gz -b $ROIDEST/$h.V3d.nii.gz -expr 'or(ispositive(a),ispositive(b))'
 done
 
 
@@ -65,14 +84,14 @@ done
 # here, let's look for all LH ROIs (nii.gz's), load the corresponding RH ROI, add them, and save out the "OR"
 # [[this just creates bilat ROIs, will not purge overlapping voxels from LH/RH]]
 
-for r in roi/lh.*.nii.gz;do
+for r in $ROIDEST/lh.*.nii.gz;do
 
-  fname=`echo $r | cut -f 2 -d /`
+  fname=`echo $r | cut -f 7 -d /`
   #hemi=`echo $fname | cut -f 1 -d .`
   area=`echo $fname | cut -f 2 -d .`
   echo $area
 
-  3dcalc -prefix roi/bilat.$area.nii.gz -overwrite -a roi/lh.$area.nii.gz -b roi/rh.$area.nii.gz -expr 'or(ispositive(a),ispositive(b))'
+  3dcalc -prefix $ROIDEST/bilat.$area.nii.gz -overwrite -a $ROIDEST/lh.$area.nii.gz -b $ROIDEST/rh.$area.nii.gz -expr 'or(ispositive(a),ispositive(b))'
 
 
 done
