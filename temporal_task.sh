@@ -76,9 +76,9 @@ cd $ROOT/$SUBJ
 
 # figure out how many cores...
 
-RUN=`ls -l $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${DATATYPE}{}_volreg.nii.gz | wc -l`
-rm ./list.txt; for ((i=1;i<=RUN;i++)); do printf "%02.f\n" $i >> ./list.txt; done
-CORES=RUN
+RUN=`ls -l $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${DATATYPE}*_volreg.nii.gz | wc -l`
+rm ./list.txt; for ((i=1;i<=$RUN;i++)); do printf "%02.f\n" $i >> ./list.txt; done
+CORES=$RUN
 
     # Linear detrend (for  mean estimation)
     cat ./list.txt | parallel -P $CORES \
@@ -164,6 +164,3 @@ CORES=RUN
 
     # save out a set of volumes depicting the mean (to comapre residual distortions)
     #3dTcat -prefix $SESS/${SUBJ}_${s}_meanruns.nii.gz $SESS/${DATATYPE}_volreg_mean*.nii.gz
-
-
-done

@@ -73,7 +73,7 @@ FUNCSUF=".volreg+orig.BRIK"
 
 RUN=`ls -l $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/${FUNCPRE}*${FUNCSUF} | wc -l`
 rm $DATAROOT/$EXPTDIR/$SUBJ/list.txt; for ((i=1;i<=RUN;i++)); do printf "%02.f\n" $i >> $DATAROOT/$EXPTDIR/$SUBJ/list.txt; done
-CORES=RUN
+CORES=$RUN
 
 # COPY BRIK/HEAD to nii/gz in super-directory
 cat $DATAROOT/$EXPTDIR/$SUBJ/list.txt | parallel -P $CORES \
@@ -89,7 +89,7 @@ FUNCSUF="_surf.nii.gz"
 ## set number of runs for current session
 RUN=`ls -l $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${FUNCPRE}*${FUNCSUF} | wc -l`
 rm $DATAROOT/$EXPTDIR/$SUBJ/list.txt; for ((i=1;i<=RUN;i++)); do printf "%02.f\n" $i >> $DATAROOT/$EXPTDIR/$SUBJ/list.txt; done
-CORES=RUN
+CORES=$RUN
 
 
 # COPY BRIK/HEAD to nii/gz in super-directory
