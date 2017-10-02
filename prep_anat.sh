@@ -29,6 +29,7 @@ PREPROC_DIR=$(ls -d $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_*r*_SEalign.results |
 PREPROC_IMG=$(ls $PREPROC_DIR/pb02.*.volreg+orig.BRIK | head -1)
 
 3dresample -prefix $DATAROOT/$EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz -master $PREPROC_IMG -rmode Cu -inset $DATAROOT/$EXPTDIR/$SUBJ/$ANATSUBJ/SUMA/brainmask.nii
+3dresample -prefix $DATAROOT/$EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz -orient rai -inset $DATAROOT/$EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz
 #3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_master_25mm.nii.gz -master $PREPROC_IMG -rmode Cu -inset $SUBJECTS_DIR/$ANATSUBJ/SUMA/brainmask.nii
 #3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_hires.nii.gz -dxyz 1.0 1.0 2.0 -rmode Cu -orient RAI -inset $EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz
 #3dresample -prefix $EXPTDIR/$SUBJ/surfanat_brainmask_hires_25mm.nii.gz -dxyz 1.25 1.25 2.5 -rmode Cu -orient RAI -inset $EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz

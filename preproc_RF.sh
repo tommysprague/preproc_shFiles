@@ -57,7 +57,7 @@ $PREPROC/bias_correct.sh $EXPTDIR $SUBJ $SESS
 # 2 & 3) run spatial unwarping/preprocessing
 $PREPROC/spatial_afni_proc_SEalign.sh $EXPTDIR $SUBJ $SESS $BLURAMT
 
-
+$PREPROC/prep_anat.sh $EXPTDIR $SUBJ $SESS
 
 # 4) vista directory
 VISTADIR=$DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
@@ -65,7 +65,7 @@ mkdir $VISTADIR
 
 # copy pb02 images, convert to RAI
 3dMean -prefix $VISTADIR/bar_seq_1_bc.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*_SEalign.results/pb02*.BRIK
-3dresample -overwrite -prefix $VISTADIR/bar_seq_1_bc.nii.gz -orient rai -inset $VISTADIR/bar_seq_1_bc.nii.gz
+3dresample -overwrite -prefix $VISTADIR/bar_seq_1_func.nii.gz -orient rai -inset $VISTADIR/bar_seq_1_func.nii.gz
 
 # combine ss5, surf images
 3dMean -prefix $VISTADIR/bar_seq_1_surf.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}.r*_surf.nii.gz
