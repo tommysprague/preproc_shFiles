@@ -64,7 +64,7 @@ VISTADIR=$DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 mkdir $VISTADIR
 
 # copy pb02 images, convert to RAI
-3dMean -prefix $VISTADIR/bar_seq_1_bc.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*_SEalign.results/pb02*.BRIK
+3dMean -prefix $VISTADIR/bar_seq_1_func.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*_SEalign.results/pb02*.BRIK
 3dresample -overwrite -prefix $VISTADIR/bar_seq_1_func.nii.gz -orient rai -inset $VISTADIR/bar_seq_1_func.nii.gz
 
 # combine ss5, surf images
@@ -72,4 +72,4 @@ mkdir $VISTADIR
 3dMean -prefix $VISTADIR/bar_seq_1_ss$BLURAMT.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}.r*_ss$BLURAMT.nii.gz
 
 # QC: motion params, put in align_QC
-3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D ${SUBJ}_${SESS}*.results/motion*.1D
+3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/motion*.1D
