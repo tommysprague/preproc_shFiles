@@ -47,6 +47,10 @@ EXPTDIR=$1
 SUBJ=$2
 SESS=$3
 
+ANATSUBJ=${SUBJ}anat
+
+ln -s ../../fs_subjects/$ANATSUBJ $DATAROOT/$EXPTDIR/$SUBJ/$ANATSUBJ
+
 
 # 1) run bias correction
 $PREPROC/bias_correct.sh $EXPTDIR $SUBJ $SESS
