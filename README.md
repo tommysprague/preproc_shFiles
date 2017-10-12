@@ -18,7 +18,6 @@ The script __preproc_RF.sh__ calls all necessary preprocessing commands to set u
   -  projection back into volume space of all surface datasets
 3. Preparation of vistasoft directory (averaging timeseries)
 4. TODO: basic signal quality checks, like tSNR/COV, and computation of noise voxel masks
-5. TODO: projection into a 'target' volume space (likely via a separate function) - for projecting high-resolution data, from retinotopy, into lower-resolution grids used for task
 
 
 ## Task data
@@ -27,4 +26,18 @@ When preprocessing task data (__preproc_task.sh__), we perform most of the above
 
 Resulting data (both surface-ribbon, 'surf', and full-volume, 'func') can then be used by custom data processing scripts (typically in MATLAB/Python)
 
+## Converting retinotopic mapping datasets to task data grid
+We typically acquire retinotopic mapping datasets at higher resolution than task data to minimize partial voluming and clean up ROI definitions. Sometimes, we also want to use voxel RF (vRF) properties to filter/sort voxels in task data analyses. Accordingly, we need vRF parameters in the same grid as the task data. While in principle one could resample the best-fit RF volumes (RF*.nii.gz files created by vista), this won't be quite correct (especially the variance explained parameter, which is likely important for sorting voxels). Additionally, without re-adjusting the polar angle & eccentricity parameters after resampling given new x,y, those will be slightly incorrect.
+
+So, instead, we'll resample the original datasets and re-fit models with vista. While computationally intensive, this is necessary to ensure accurate model parameters. At present, we resample only the raw 'func' files and the surface-projected 'surf' files, but not the surface-smoothed 'blur'/'ss5' files (those are used only for ROI definitions, but not sorting voxels based on vRF properties). For 'surf' files, rather than resampling the surf volume .nii.gz files, we'll re-project from surface .dset files into volume with **surf_to_vol_targGrid.sh** which allows for specification of a custom volume grid, which we derive from pre-processed task data (NOTE: this means task data must be pre-processed with **preproc_task.sh** before we can resample retinotopy). All resampled data is placed in _retinotopy_ session directory, and will need to be indexed as such from task datasets.
+
+To resample retintopy data, see **RF_to_task.sh**, which:
+1. resamples in volume the anat masks (surfant_brainmask*.nii.gz) to match new grid resolution
+2. runs **surf_to_vol_targGrid.sh** on 'surf' files
+3. resamples 'func' files
+4. averages all runs of 'surf' and 'func' files into _vista/ directory
+
+You'll still need to manually run do_RFs.m to recompute RF properties, but otherwise this script will take care of all data preparation.
+
+## Dependencies
 Some functions (surface-->volume) require repository https://github.com/tommysprague/preproc_mFiles, which requires vistasoft (ideally this branch: https://github.com/tommysprague/vistasoft_ts/tree/sprague_gridfit_updates)

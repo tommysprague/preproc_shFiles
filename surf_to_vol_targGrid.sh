@@ -1,45 +1,26 @@
 #!/bin/bash
+#
+# surf_to_vol_targGrid.sh
+#
+# Used for transforming surface data from one session/resolution into volume data in grid from a different session/resolution
+#
+# Adapted from surf_to_vol_SEalign.sh, only difference is location things are saved and gridparent
+#
+# TCS 10/11/2017
+#
+# run like:
+# surf_to_vol_targGrid.sh vRF_tcs CC RF1 surf 0 /deathstar/data/wmChoose_scanner/CC/MGSMap1/func01_volreg.nii.gz _25mm
+# args:
+# - SOURCE experiment directory (e.g., vRF_tcs)
+# - SUBJ
+# - SOURCE session name (e.g., RF1)
+# - type of data (surf, blur)
+# - FWHM (for non-blur, use "0"; it's ignored)
+# - FULL PATH to a 'gridparent' dataset (the grid we want to render our data into)
+# - SUFFIX to add to end of filename, must include an underscore/separation character if you need one
+#
+# above will create CC_RF1.r*_surf_25mm.nii.gz files in /vRF_tcs/CC/RF1/
 
-# run like
-# surf_to_vol_SEalign.sh vRF_tcs CC RF1 blur 5
-# -OR
-# surf_to_vol_SEalign.sh vRF_tcs CC RF1 surf
-
-
-# smooth on the SUMA surface
-#
-# adapted from surfsmooth.sh, from KD
-# adapted from surfsmooth_tcs.sh, from TCS
-# TCS, 4/10/2017
-# UDPATED TCS 7/21/2017 for PRISMA Multiband data (processed w/ afni_proc.py)
-# UPDATED TCS 9/11/2017 for sub-session spin-echo alignment
-#
-# attempts to do parallel processing (this step is *very* slow)
-#
-# assumes you have a subj directory like:
-# SUBJ
-# - ANATSUBJ [symlink to shared SUBJECTS_DIR]
-# --- SUMA
-# ------ ANATSUBJ_lh/rh.spec
-# ------ ANATSUBJ_SurfVol+orig.
-# - FUNCsess
-# --- SUBJ_FUNCsess.results/pb0X.SUBJ_FUNCsess.?h.r0?.[surf/blur].niml.dset
-#
-# data have already been smoothed in the surface from afni_proc.py, so here we're just projecting back into volume
-#
-# Proceeds by doing this for LH, RH independently (due to how SUMA handles things),
-# then combining these images and saving as a new _ss.nii.gz dataset
-#
-#
-# meant to be run from subj ROOT directory
-#
-# At conclusion of vol --> surf --> vol transforms, resulting nii.gz's are poorly built - they're
-# missing info about # TRs and they're written to 5D
-# - loops through runs within session and 'squeezes' the nifti using preproc_mFiles toolbox niftiSqueeze
-# - looks up TR from the $FUNCSESS and uses that to reset TR value in nifti
-# - transforms data to RAI, which is the final space we want *all* data in
-#
-# TODO: make a version of this that projects into a different gridparent
 
 
 DATAROOT=/deathstar/data
@@ -52,6 +33,7 @@ ROOT=$DATAROOT/$EXPTDIR
 SUBJ=$2
 FUNCSESS=$3
 
+
 ANATSUBJ=${SUBJ}anat
 
 #TR=$4   # TODO: figure out how to get this dynamically per run (hard w/ parallel command...)
@@ -62,6 +44,10 @@ SOURCESTR=$4
 FWHM=$5
 #CORES=8
 
+GRIDPARENT=$6
+
+TARGSUFFIX=$7
+
 
 
 ALL_PREPROC_DIR=$(ls -d $ROOT/$SUBJ/$FUNCSESS/${SUBJ}_${FUNCSESS}*.results)
@@ -70,11 +56,11 @@ ALL_PREPROC_DIR=$(ls -d $ROOT/$SUBJ/$FUNCSESS/${SUBJ}_${FUNCSESS}*.results)
 if [[ $SOURCESTR = blur ]]; then
   #statements
   PBNUM=pb04
-  FUNCSUFFIX=ss$FWHM
+  FUNCSUFFIX=ss${FWHM}${TARGSUFFIX}
 elif [[ $SOURCESTR = surf ]]; then
   #statements
   PBNUM=pb03
-  FUNCSUFFIX=surf
+  FUNCSUFFIX=surf${TARGSUFFIX}
 fi
 
 
@@ -136,7 +122,7 @@ cat ./$FUNCSESS/func_list_lh.txt | parallel -P $CORES -C / \
 -surf_A smoothwm \
 -surf_B pial \
 -sv ./${ANATSUBJ}/SUMA/${ANATSUBJ}_SurfVol+orig. \
--grid_parent ./${FUNCSESS}/${FUNCPREFIX}_r01.nii.gz \
+-grid_parent $GRIDPARENT \
 -map_func ave \
 -f_steps 10 \
 -prefix ./${FUNCSESS}/{-1}_$FUNCSUFFIX.nii.gz \
@@ -149,7 +135,7 @@ cat ./$FUNCSESS/func_list_rh.txt | parallel -P $CORES -C / \
 -surf_A smoothwm \
 -surf_B pial \
 -sv ./${ANATSUBJ}/SUMA/${ANATSUBJ}_SurfVol+orig. \
--grid_parent ./${FUNCSESS}/${FUNCPREFIX}_r01.nii.gz \
+-grid_parent $GRIDPARENT \
 -map_func ave \
 -f_steps 10 \
 -prefix ./${FUNCSESS}/{-1}_$FUNCSUFFIX.nii.gz \
