@@ -8,7 +8,7 @@ ROOT=/deathstar/data/wmChoose_scanner
 
 
 SUBJ=CC
-SESS=MGSMap25mm_MB4
+SESS=MGSMap1
 
 AnatSUBJ=${SUBJ}anat
 
@@ -22,7 +22,7 @@ mkdir $ROIDEST
 TR=1 # null value for nifti squeeze
 
 #GridParent=/deathstar/data/wmChoose_scanner/CC/MGSMap25mm_MB4/CC_MGSMap25mm_MB4_bar_width_1_bc_ss5.nii.gz
-GridParent=$ROOT/$SUBJ/surfanat_brainmask_master_RAI.nii.gz
+GridParent=$ROOT/$SUBJ/surfanat_brainmask_master.nii.gz
 
 
 cd $ROILOC
