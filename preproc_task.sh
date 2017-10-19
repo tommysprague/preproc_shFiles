@@ -59,6 +59,21 @@ $PREPROC/bias_correct.sh $EXPTDIR $SUBJ $SESS
 # 2 & 3) run spatial unwarping/preprocessing
 $PREPROC/spatial_afni_proc_SEalign.sh $EXPTDIR $SUBJ $SESS $BLURAMT
 
+
+
+# cores = # of lines in SUBJ_SESS_SEtargets file
+CORES=`cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | wc -l`
+
+# make sure we don't blow things up....
+export OMP_NUM_THREADS=8
+
+cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | parallel -P $CORES -C ' ' \
+  $PREPROC/spatial_afni_proc_SEalign.sh $EXPTDIR $SUBJ $SESS {1} {2} {3} $BLURAMT
+
+# reset to default value
+export OMP_NUM_THREADS=24
+
+
 # QC: motion params, put in align_QC
 3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D ${SUBJ}_${SESS}*.results/motion*.1D
 
