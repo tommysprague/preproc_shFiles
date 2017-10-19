@@ -24,9 +24,12 @@ EXPTDIR=$1
 SUBJ=$2
 SESS=$3
 
+SEtarg=$4
+STARTRUN=$5
+ENDRUN=$6
 
 
-BLURAMT=$4
+BLURAMT=$7
 
 
 DATAROOT=/deathstar/data

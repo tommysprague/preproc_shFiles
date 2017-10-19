@@ -76,6 +76,12 @@ cat ./list.txt | parallel -P $CORES \
         -mean $SESS/${DATATYPE}_volreg_detrend{}.nii.gz
 
 
+# ensure surfanat_brainmask_master.nii.gz is in RAI
+3dresample -prefix $DATAROOT/$EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz \
+           -inset  $DATAROOT/$EXPTDIR/$SUBJ/surfanat_brainmask_master.nii.gz \
+           -overwrite -orient rai 
+
+
 # percent signal change - computed w/ detrended rather than hi-pass'd data; also remove 1
 cat ./list.txt | parallel -P $CORES \
 3dcalc -prefix $SESS/${DATATYPE}_volreg_normPctDet{}.nii.gz \
