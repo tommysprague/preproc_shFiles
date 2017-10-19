@@ -47,6 +47,9 @@ EXPTDIR=$1
 SUBJ=$2
 SESS=$3
 
+ln -s ../../fs_subjects/${SUBJ}anat $DATAROOT/$EXPTDIR/$SUBJ/${SUBJ}anat
+
+
 
 # 1) run bias correction
 $PREPROC/bias_correct.sh $EXPTDIR $SUBJ $SESS
@@ -70,7 +73,6 @@ FUNCSUF=".volreg+orig.BRIK"
 #FUNCSTR="pb02.${SUBJ}_${s}.r*.volreg+orig.BRIK"
 
 ## set number of runs for current session
-
 RUN=`ls -l $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/${FUNCPRE}*${FUNCSUF} | wc -l`
 rm $DATAROOT/$EXPTDIR/$SUBJ/list.txt; for ((i=1;i<=RUN;i++)); do printf "%02.f\n" $i >> $DATAROOT/$EXPTDIR/$SUBJ/list.txt; done
 CORES=$RUN
