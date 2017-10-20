@@ -41,16 +41,16 @@ cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
 # LOOP OVER LINES IN SUBJ_SESS_SEtargets.txt - this should contain the SE targ, startrun, and endrun in that order on each line
 
 
-cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | while read line
-do
+#cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | while read line
+#do
 
 
-  set $line
+#  set $line
 
-  SEtarg=$1  # which scan (blip pair) is the spin-echo target
+#  SEtarg=$1  # which scan (blip pair) is the spin-echo target
 
-  STARTRUN=$2
-  ENDRUN=$3
+#  STARTRUN=$2
+#  ENDRUN=$3
 
 
 
@@ -147,21 +147,7 @@ do
   done
 
 
-done
+#done
 
-# make QC movie
-3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_all.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_r*.nii.gz
-
-
-# put things back into this same volume space...
-
-
-$PREPROC/surf_to_vol_SEalign.sh $EXPTDIR $SUBJ $SESS surf
-
-# if blurring, do taht too
-if [ $BLURAMT != 0 ]
-then
-  $PREPROC/surf_to_vol_SEalign.sh $EXPTDIR $SUBJ $SESS blur $BLURAMT
-fi
 
 # otherwise, also do the pb04's
