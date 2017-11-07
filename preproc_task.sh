@@ -77,6 +77,10 @@ export OMP_NUM_THREADS=24
 # QC: motion params, put in align_QC
 3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D ${SUBJ}_${SESS}*.results/motion*.1D
 
+# put things back into this same volume space...
+$PREPROC/surf_to_vol_SEalign.sh $EXPTDIR $SUBJ $SESS surf
+
+
 # create masks, etc, needed for temporal processing
 $PREPROC/prep_anat.sh $EXPTDIR $SUBJ $SESS
 

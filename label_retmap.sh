@@ -11,7 +11,7 @@ vistaDir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 RFdir=$vistaDir/Inplane/Original   # where the RF files are saved, incl. nii.gz (raw)
 
 
-declare -a RF_prefix=("RF_func" "RF_ss5" "RF_surf") # "RF_ss5" "RF_surf") # "RF_pctDet_surf")
+declare -a RF_prefix=("RF_func_25mm" "RF_surf_25mm" "RF_ss5" ) # "RF_ss5" "RF_surf") # "RF_pctDet_surf")
 declare -a RF_suffix=("gFit" "sFit" "fFit")
 
 for p in "${RF_prefix[@]}"; do
