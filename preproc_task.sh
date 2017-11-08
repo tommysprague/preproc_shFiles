@@ -59,6 +59,7 @@ $PREPROC/bias_correct.sh $EXPTDIR $SUBJ $SESS
 # 2 & 3) run spatial unwarping/preprocessing
 #$PREPROC/spatial_afni_proc_SEalign.sh $EXPTDIR $SUBJ $SESS $BLURAMT
 
+cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
 
 
 # cores = # of lines in SUBJ_SESS_SEtargets file
@@ -75,7 +76,11 @@ export OMP_NUM_THREADS=24
 
 
 # QC: motion params, put in align_QC
-3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D ${SUBJ}_${SESS}*.results/motion*.1D
+3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/motion*.1D
+
+# make QC movie
+3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_all.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_r*.nii.gz
+
 
 # put things back into this same volume space...
 $PREPROC/surf_to_vol_SEalign.sh $EXPTDIR $SUBJ $SESS surf
