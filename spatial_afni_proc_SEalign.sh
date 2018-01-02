@@ -100,6 +100,7 @@ cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
                -surf_spec /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
                -blip_forward_dset blip_for${SEtarg}_bc.nii.gz  \
                -blip_reverse_dset blip_rev${SEtarg}_bc.nii.gz \
+               -blip_opts_qw -noXdis -noZdis \
                -execute
 
   else
@@ -117,6 +118,7 @@ cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
                  -blur_size $BLURAMT \
                  -blip_forward_dset blip_for${SEtarg}_bc.nii.gz  \
                  -blip_reverse_dset blip_rev${SEtarg}_bc.nii.gz \
+                 -blip_opts_qw -noXdis -noZdis \
                  -execute
   fi
 
