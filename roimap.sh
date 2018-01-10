@@ -1,22 +1,24 @@
-ROOT=/deathstar/data/PrismaPilotScans
-SUBJ=CC
-SESS=CMRR_S4
+ROOT=/deathstar/data/vRF_tcs
+SUBJ=MSR
+SESS=RF1
 
-AnatSUBJ=CCanat_fs6b
+AnatSUBJ=MSRanat
 
 TR=1 # null value for nifti squeeze
 
-GridParent=bar_width_1_bc_ss5.nii.gz
+GridParent=bar_seq_1_ss5.nii.gz ##bar_width_1_bc_ss5.nii.gz
 
 cd $ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 
+ROIloc=roi_tcs
+
 declare -a HEMIS=("lh" "rh")
 
-ROIdir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista/roi
+ROIdir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista/$ROIloc
 
 # this generically looks for ROIs on surface and turns them into ROIs on volume
 
-for r in roi/*1D.roi;do
+for r in $ROIloc/*1D.roi;do
 
   # ASSUMES: lh.V1.1D.roi, etc
 
@@ -37,8 +39,11 @@ for r in roi/*1D.roi;do
     -f_steps 15 \
     -sdata_1D $r \
     -sxyz_orient_as_gpar                                  \
-    -prefix roi/$hemi.${area}.nii.gz \
+    -prefix $ROIloc/$hemi.${area}.nii.gz \
     -overwrite
+
+
+
 
 # sxyz_orient_as_gpar shoudl give better orientation?
 # -tryign out -sdata w/ NIML instead of -sdata1D
@@ -56,8 +61,8 @@ done
 # look for V2v/V2d in each hemisphere and combine them
 #for s in "${SESSIONS[@]}"; do
 for h in "${HEMIS[@]}"; do
-  3dcalc -prefix roi/$h.V2.nii.gz -overwrite -a roi/$h.V2v.nii.gz -b roi/$h.V2d.nii.gz -expr 'or(ispositive(a),ispositive(b))'
-  3dcalc -prefix roi/$h.V3.nii.gz -overwrite -a roi/$h.V3v.nii.gz -b roi/$h.V3d.nii.gz -expr 'or(ispositive(a),ispositive(b))'
+  3dcalc -prefix $ROIloc/$h.V2.nii.gz -overwrite -a $ROIloc/$h.V2v.nii.gz -b $ROIloc/$h.V2d.nii.gz -expr 'or(ispositive(a),ispositive(b))'
+  3dcalc -prefix $ROIloc/$h.V3.nii.gz -overwrite -a $ROIloc/$h.V3v.nii.gz -b $ROIloc/$h.V3d.nii.gz -expr 'or(ispositive(a),ispositive(b))'
 done
 
 
@@ -65,14 +70,14 @@ done
 # here, let's look for all LH ROIs (nii.gz's), load the corresponding RH ROI, add them, and save out the "OR"
 # [[this just creates bilat ROIs, will not purge overlapping voxels from LH/RH]]
 
-for r in roi/lh.*.nii.gz;do
+for r in $ROIloc/lh.*.nii.gz;do
 
   fname=`echo $r | cut -f 2 -d /`
   #hemi=`echo $fname | cut -f 1 -d .`
   area=`echo $fname | cut -f 2 -d .`
   echo $area
 
-  3dcalc -prefix roi/bilat.$area.nii.gz -overwrite -a roi/lh.$area.nii.gz -b roi/rh.$area.nii.gz -expr 'or(ispositive(a),ispositive(b))'
+  3dcalc -prefix $ROIloc/bilat.$area.nii.gz -overwrite -a $ROIloc/lh.$area.nii.gz -b $ROIloc/rh.$area.nii.gz -expr 'or(ispositive(a),ispositive(b))'
 
 
 done

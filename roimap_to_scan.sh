@@ -7,7 +7,7 @@
 ROOT=/deathstar/data/wmChoose_scanner
 
 
-SUBJ=AB
+SUBJ=AY
 SESS=MGSMap1
 
 AnatSUBJ=${SUBJ}anat

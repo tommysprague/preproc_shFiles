@@ -66,7 +66,7 @@ cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
 CORES=`cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | wc -l`
 
 # make sure we don't blow things up....
-export OMP_NUM_THREADS=8
+export OMP_NUM_THREADS=8 
 
 cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | parallel -P $CORES -C ',' \
   $PREPROC/spatial_afni_proc_SEalign.sh $EXPTDIR $SUBJ $SESS {1} {2} {3} $BLURAMT
