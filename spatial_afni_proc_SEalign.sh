@@ -73,6 +73,7 @@ cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
                -anat_has_skull no \
                -blip_forward_dset $DATAROOT/$EXPTDIR/$SUBJ/$SESS/blip_for${SEtarg}_bc.nii.gz  \
                -blip_reverse_dset $DATAROOT/$EXPTDIR/$SUBJ/$SESS/blip_rev${SEtarg}_bc.nii.gz \
+               -blip_opts_qw -noXdis -noZdis \
                -execute
 
   # for the SE target, average all unwarped volumes
