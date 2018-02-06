@@ -47,7 +47,9 @@ EXPTDIR=$1
 SUBJ=$2
 SESS=$3
 
+
 ln -s ../../fs_subjects/${SUBJ}anat $DATAROOT/$EXPTDIR/$SUBJ/${SUBJ}anat
+
 
 
 
