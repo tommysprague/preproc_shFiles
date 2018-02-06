@@ -13,7 +13,7 @@
 # - just resamples the existing surfanat_brainmask_master, etc, files
 #
 # run like:
-# $PREPROC/RF_to_task.sh vRF_tcs CC RF1 /deathstar/data/wmChoose_scanner/CC/MGSMap1/func_volreg01.nii.gz _25mm
+# $PREPROC/RF_to_task.sh vRF_tcs CC RF1 /deathstar/data/wmChoose_scanner/CC/MGSMap1/func01_volreg.nii.gz _25mm
 #
 # arguments:
 # - RETINOTOPY experiment directory
@@ -36,7 +36,7 @@ TARGSUFFIX=$5
 # ~~~~~~~~ resample surfanat files to GRIDPARENT grid, rename w/ TARGSUFFIX ~~~~~~~~
 3dresample -inset  $DATAROOT/$EXPTDIR/$RETSUBJ/surfanat_brainmask_master.nii.gz \
            -prefix $DATAROOT/$EXPTDIR/$RETSUBJ/surfanat_brainmask_master${TARGSUFFIX}.nii.gz \
-           -master $GRIDPARENT
+           -master $GRIDPARENT -overwrite
 
 # new grid
 OLDI=$(3dinfo -adi $GRIDPARENT)
@@ -48,7 +48,7 @@ NEWK=$(3dinfo -adk $GRIDPARENT)
 # make high-res version for vista
 3dresample -inset  $DATAROOT/$EXPTDIR/$RETSUBJ/surfanat_brainmask_master${TARGSUFFIX}.nii.gz \
            -prefix $DATAROOT/$EXPTDIR/$RETSUBJ/surfanat_brainmask_hires${TARGSUFFIX}.nii.gz \
-           -dxyz $NEWI $NEWJ $NEWK
+           -dxyz $NEWI $NEWJ $NEWK -overwrite
 
 # ~~~~~~~ run surf_to_vol_targGrid.sh on surf files ~~~~~~~~~~
 $PREPROC/surf_to_vol_targGrid.sh $EXPTDIR $RETSUBJ $RETSESS surf 0 $GRIDPARENT $TARGSUFFIX
@@ -87,9 +87,9 @@ cat $DATAROOT/$EXPTDIR/$RETSUBJ/list.txt | parallel -P $CORES \
 
 # ~~~~~~~~ average like runs, put in _vista directory ~~~~~~~~
 # surf
-3dMean -prefix $DATAROOT/$EXPTDIR/$RETSUBJ/$RETSESS/${RETSUBJ}_${RETSESS}_vista/bar_seq_1_surf${TARGSUFFIX}.nii.gz \
+3dMean -prefix $DATAROOT/$EXPTDIR/$RETSUBJ/$RETSESS/${RETSUBJ}_${RETSESS}_vista/bar_seq_1_surf${TARGSUFFIX}.nii.gz -overwrite \
        $DATAROOT/$EXPTDIR/$RETSUBJ/$RETSESS/${RETSUBJ}_${RETSESS}.r*_surf${TARGSUFFIX}.nii.gz
 
 # func
-3dMean -prefix $DATAROOT/$EXPTDIR/$RETSUBJ/$RETSESS/${RETSUBJ}_${RETSESS}_vista/bar_seq_1_func${TARGSUFFIX}.nii.gz \
+3dMean -prefix $DATAROOT/$EXPTDIR/$RETSUBJ/$RETSESS/${RETSUBJ}_${RETSESS}_vista/bar_seq_1_func${TARGSUFFIX}.nii.gz -overwrite \
        $DATAROOT/$EXPTDIR/$RETSUBJ/$RETSESS/${RETSUBJ}_${RETSESS}.r*_func${TARGSUFFIX}.nii.gz

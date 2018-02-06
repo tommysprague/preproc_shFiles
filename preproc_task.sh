@@ -47,9 +47,10 @@ EXPTDIR=$1
 SUBJ=$2
 SESS=$3
 
-ANATSUBJ=${SUBJ}anat
 
-ln -s ../../fs_subjects/$ANATSUBJ $DATAROOT/$EXPTDIR/$SUBJ/$ANATSUBJ
+ln -s ../../fs_subjects/${SUBJ}anat $DATAROOT/$EXPTDIR/$SUBJ/${SUBJ}anat
+
+
 
 
 # 1) run bias correction
@@ -58,10 +59,34 @@ $PREPROC/bias_correct.sh $EXPTDIR $SUBJ $SESS
 
 
 # 2 & 3) run spatial unwarping/preprocessing
-$PREPROC/spatial_afni_proc_SEalign.sh $EXPTDIR $SUBJ $SESS $BLURAMT
+#$PREPROC/spatial_afni_proc_SEalign.sh $EXPTDIR $SUBJ $SESS $BLURAMT
+
+cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
+
+
+# cores = # of lines in SUBJ_SESS_SEtargets file
+CORES=`cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | wc -l`
+
+# make sure we don't blow things up....
+export OMP_NUM_THREADS=8 
+
+cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | parallel -P $CORES -C ',' \
+  $PREPROC/spatial_afni_proc_SEalign.sh $EXPTDIR $SUBJ $SESS {1} {2} {3} $BLURAMT
+
+# reset to default value
+export OMP_NUM_THREADS=24
+
 
 # QC: motion params, put in align_QC
-3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D ${SUBJ}_${SESS}*.results/motion*.1D
+3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/motion*.1D
+
+# make QC movie
+3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_all.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_r*.nii.gz
+
+
+# put things back into this same volume space...
+$PREPROC/surf_to_vol_SEalign.sh $EXPTDIR $SUBJ $SESS surf
+
 
 # create masks, etc, needed for temporal processing
 $PREPROC/prep_anat.sh $EXPTDIR $SUBJ $SESS
@@ -74,7 +99,6 @@ FUNCSUF=".volreg+orig.BRIK"
 #FUNCSTR="pb02.${SUBJ}_${s}.r*.volreg+orig.BRIK"
 
 ## set number of runs for current session
-
 RUN=`ls -l $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/${FUNCPRE}*${FUNCSUF} | wc -l`
 rm $DATAROOT/$EXPTDIR/$SUBJ/list.txt; for ((i=1;i<=RUN;i++)); do printf "%02.f\n" $i >> $DATAROOT/$EXPTDIR/$SUBJ/list.txt; done
 CORES=$RUN

@@ -24,9 +24,12 @@ EXPTDIR=$1
 SUBJ=$2
 SESS=$3
 
+SEtarg=$4
+STARTRUN=$5
+ENDRUN=$6
 
 
-BLURAMT=$4
+BLURAMT=$7
 
 
 DATAROOT=/deathstar/data
@@ -38,16 +41,16 @@ cd $DATAROOT/$EXPTDIR/$SUBJ/$SESS/
 # LOOP OVER LINES IN SUBJ_SESS_SEtargets.txt - this should contain the SE targ, startrun, and endrun in that order on each line
 
 
-cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | while read line
-do
+#cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_SEtargets.txt | while read line
+#do
 
 
-  set $line
+#  set $line
 
-  SEtarg=$1  # which scan (blip pair) is the spin-echo target
+#  SEtarg=$1  # which scan (blip pair) is the spin-echo target
 
-  STARTRUN=$2
-  ENDRUN=$3
+#  STARTRUN=$2
+#  ENDRUN=$3
 
 
 
@@ -70,6 +73,7 @@ do
                -anat_has_skull no \
                -blip_forward_dset $DATAROOT/$EXPTDIR/$SUBJ/$SESS/blip_for${SEtarg}_bc.nii.gz  \
                -blip_reverse_dset $DATAROOT/$EXPTDIR/$SUBJ/$SESS/blip_rev${SEtarg}_bc.nii.gz \
+               -blip_opts_qw -noXdis -noZdis \
                -execute
 
   # for the SE target, average all unwarped volumes
@@ -97,6 +101,7 @@ do
                -surf_spec /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
                -blip_forward_dset blip_for${SEtarg}_bc.nii.gz  \
                -blip_reverse_dset blip_rev${SEtarg}_bc.nii.gz \
+               -blip_opts_qw -noXdis -noZdis \
                -execute
 
   else
@@ -114,6 +119,7 @@ do
                  -blur_size $BLURAMT \
                  -blip_forward_dset blip_for${SEtarg}_bc.nii.gz  \
                  -blip_reverse_dset blip_rev${SEtarg}_bc.nii.gz \
+                 -blip_opts_qw -noXdis -noZdis \
                  -execute
   fi
 
@@ -144,21 +150,7 @@ do
   done
 
 
-done
+#done
 
-# make QC movie
-3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_all.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_r*.nii.gz
-
-
-# put things back into this same volume space...
-
-
-$PREPROC/surf_to_vol_SEalign.sh $EXPTDIR $SUBJ $SESS surf
-
-# if blurring, do taht too
-if [ $BLURAMT != 0 ]
-then
-  $PREPROC/surf_to_vol_SEalign.sh $EXPTDIR $SUBJ $SESS blur $BLURAMT
-fi
 
 # otherwise, also do the pb04's

@@ -7,13 +7,16 @@
 ROOT=/deathstar/data/wmChoose_scanner
 
 
-SUBJ=CC
+SUBJ=XX
+
 SESS=MGSMap1
 
 AnatSUBJ=${SUBJ}anat
 
 
-ROILOC=/deathstar/data/vRF_tcs/CC/RF1/CC_RF1_vista/roi
+ROIEXT=_tcs
+
+ROILOC=/deathstar/data/vRF_tcs/$SUBJ/RF1/${SUBJ}_RF1_vista/roi$ROIEXT
 
 ROIDEST=$ROOT/$SUBJ/rois
 mkdir $ROIDEST
@@ -31,11 +34,11 @@ cd ..
 
 declare -a HEMIS=("lh" "rh")
 
-ROIdir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista/roi
+#ROIdir=$ROOT/$SUBJ/$SESS/${SUBJ}_${SESS}_vista/roi
 
 # this generically looks for ROIs on surface and turns them into ROIs on volume
 
-for r in roi/*1D.roi;do
+for r in roi$ROIEXT/*1D.roi;do
 
   # ASSUMES: lh.V1.1D.roi, etc
 
