@@ -43,7 +43,7 @@ cd $ROOT/$SUBJ
 for s in "${SESSIONS[@]}"; do
 
     FUNCPRE="pb02.${SUBJ}_${s}*.r"
-    FUNCSUF=".volreg+orig.BRIK"
+    FUNCSUF=".volreg+orig.BRIK*"
     #FUNCSTR="pb02.${SUBJ}_${s}.r*.volreg+orig.BRIK"
 
     ## set number of runs for current session

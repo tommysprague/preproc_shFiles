@@ -95,7 +95,7 @@ $PREPROC/prep_anat.sh $EXPTDIR $SUBJ $SESS
 
 # a) move pb02 files into here as func_volreg [took this from temporal_task*.sh]
 FUNCPRE="pb02.${SUBJ}_${SESS}*.r"
-FUNCSUF=".volreg+orig.BRIK"
+FUNCSUF=".volreg+orig.BRIK*"
 #FUNCSTR="pb02.${SUBJ}_${s}.r*.volreg+orig.BRIK"
 
 ## set number of runs for current session

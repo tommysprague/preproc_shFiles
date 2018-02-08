@@ -99,7 +99,7 @@ VISTADIR=$DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}_vista
 mkdir $VISTADIR
 
 # copy pb02 images, convert to RAI
-3dMean -prefix $VISTADIR/bar_seq_1_func.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*_SEalign.results/pb02*.BRIK
+3dMean -prefix $VISTADIR/bar_seq_1_func.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*_SEalign.results/pb02*.BRIK*
 3dresample -overwrite -prefix $VISTADIR/bar_seq_1_func.nii.gz -orient rai -inset $VISTADIR/bar_seq_1_func.nii.gz
 
 # combine ss5, surf images
