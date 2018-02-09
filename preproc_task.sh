@@ -122,7 +122,7 @@ CORES=$RUN
 
 # COPY BRIK/HEAD to nii/gz in super-directory
 cat $DATAROOT/$EXPTDIR/$SUBJ/list.txt | parallel -P $CORES \
-3dcopy $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${FUNCPRE}{}${FUNCSUF} $DATAROOT/$EXPTDIR/$SUBJ/$SESS/surf{}_volreg.nii.gz
+mv $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${FUNCPRE}{}${FUNCSUF} $DATAROOT/$EXPTDIR/$SUBJ/$SESS/surf{}_volreg.nii.gz
 
 # run the temporal preprocessing for surf files# run the temporal processing
 $PREPROC/temporal_task.sh $EXPTDIR $SUBJ $SESS surf

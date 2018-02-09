@@ -11,7 +11,7 @@ ROOT=/deathstar/data
 
 PROJECT=wmChoose_scanner
 
-declare -a SUBJ=("EK") # "CC" "MR" "KD")
+declare -a SUBJ=("CC" "MR" "KD")
 declare -a SESS=("MGSMap1" "MGSMap2")
 
 for thissubj in "${SUBJ[@]}"; do
