@@ -1,18 +1,20 @@
 #!/bin/bash
 #
-# redo_preproc.sh
+# redo_preproc_ret.sh
 #
 # for batch recomputing all necessary preprocessing steps (w/ improved unwarping)
 
 
-# first, do this for task data....
 
 ROOT=/deathstar/data
 
-PROJECT=wmChoose_scanner
+PROJECT=vRF_tcs
 
-declare -a SUBJ=("AB")
-declare -a SESS=("MGSMap1") # "MGSMap2")
+TARGPROJ=wmChoose_scanner
+TARGSESS=MGSMap1
+
+declare -a SUBJ=("CC")
+declare -a SESS=("RF1") # "MGSMap2")
 
 for thissubj in "${SUBJ[@]}"; do
 
@@ -43,8 +45,11 @@ for thissubj in "${SUBJ[@]}"; do
         # move SUBJ/align_QC/SUBJ_SESS_mu*.nii.gz to align_QC/old/*
         mv $ROOT/$PROJECT/$thissubj/align_QC/${thissubj}_${thissess}_* $ROOT/$PROJECT/$thissubj/align_QC/orig/
 
-        # ~~~~ run preproc_task.sh ~~~~
-        $PREPROC/preproc_task.sh $PROJECT $thissubj $thissess
+        # ~~~~ run preproc_RF.sh ~~~~
+        $PREPROC/preproc_RF.sh $PROJECT $thissubj $thissess
+
+        # ~~~~ transform to task grid ~~~~~
+        $PREPROC/RF_to_task.sh $PROJECT $thissubj $thissess $ROOT/$TARGPROJ/$thissubj/$TARGSESS/func01_volreg.nii.gz _25mm
 
         # clean up surf2vol tmp files
         rm $SESSDIR/?h_${thissubj}_${thissess}.r*_*.nii.gz
