@@ -78,7 +78,7 @@ export OMP_NUM_THREADS=24
 
 
 # QC: motion params, put in align_QC
-3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/motion*.1D
+cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/motion*.1D >  $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D
 
 # make QC movie
 3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_all.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_mu_r*.nii.gz

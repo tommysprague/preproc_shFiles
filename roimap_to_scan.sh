@@ -7,7 +7,7 @@
 ROOT=/deathstar/data/wmChoose_scanner
 
 
-SUBJ=XX
+SUBJ=CC
 
 SESS=MGSMap1
 
