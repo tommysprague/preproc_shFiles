@@ -107,4 +107,4 @@ mkdir $VISTADIR
 3dMean -prefix $VISTADIR/bar_seq_1_ss$BLURAMT.nii.gz $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}.r*_ss$BLURAMT.nii.gz
 
 # QC: motion params, put in align_QC
-3dTcat -prefix $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/motion*.1D
+cat $DATAROOT/$EXPTDIR/$SUBJ/$SESS/${SUBJ}_${SESS}*.results/motion*.1D >  $DATAROOT/$EXPTDIR/$SUBJ/align_QC/${SUBJ}_${SESS}_motion_all.1D
