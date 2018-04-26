@@ -10,9 +10,6 @@
 # NOTE: does not overwrite, so if you re-run model fits, need to manually delete .nii.gz files in RETRDIR
 
 
-
-ROOT="/deathstar/data/vRF_tcs"
-
 RFDIR=$1
 SUBJ=$2
 SESS=$3
