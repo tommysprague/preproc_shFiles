@@ -176,7 +176,7 @@ cat ./$FUNCSESS/func_list.txt | parallel -P $CORES \
 #squeeze & reset TR [[_surf]]
 for FUNC in $(cat ./$FUNCSESS/func_list.txt);
 do
-  matlab -nosplash -nojvm -nodesktop -r "setup_paths_RFs; nii=niftiRead('./${FUNCSESS}/${FUNC}_$FUNCSUFFIX.nii.gz'); nii=niftiSqueeze(nii,${TR}); niftiWrite(nii,'./${FUNCSESS}/${FUNC}_$FUNCSUFFIX.nii.gz'); exit;";
+  matlab -nosplash -nodesktop -r "setup_paths_RFs; nii=niftiRead('./${FUNCSESS}/${FUNC}_$FUNCSUFFIX.nii.gz'); nii=niftiSqueeze(nii,${TR}); niftiWrite(nii,'./${FUNCSESS}/${FUNC}_$FUNCSUFFIX.nii.gz'); exit;";
 done
 
 
