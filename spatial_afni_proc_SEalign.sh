@@ -82,14 +82,14 @@ then
 # no blurring
 afni_proc.py -subj_id $RESULTSDIR \
              -dsets $(printf "/deathstar/data/$EXPTDIR/$SUBJ/$SESS/run%02.f_bc.nii.gz " `seq -s " " $STARTRUN $ENDRUN`) \
-             -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
+             -copy_anat $DATAROOT/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
              -blocks align volreg surf \
              -volreg_align_e2a \
              -volreg_base_dset SEtarget$SEtarg.nii.gz \
              -anat_has_skull no \
              -align_opts_aea -cost lpc+ZZ -giant_move \
-             -surf_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_SurfVol+orig \
-             -surf_spec /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
+             -surf_anat $DATAROOT/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_SurfVol+orig \
+             -surf_spec $DATAROOT/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
              -blip_forward_dset blip_for${SEtarg}_bc.nii.gz  \
              -blip_reverse_dset blip_rev${SEtarg}_bc.nii.gz \
              -blip_opts_qw -noXdis -noZdis
@@ -107,14 +107,14 @@ else
 
   afni_proc.py -subj_id $RESULTSDIR \
                -dsets $(printf "/deathstar/data/$EXPTDIR/$SUBJ/$SESS/run%02.f_bc.nii.gz " `seq -s " " $STARTRUN $ENDRUN`) \
-               -copy_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
+               -copy_anat $DATAROOT/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/brainmask.nii \
                -blocks align volreg surf blur \
                -volreg_align_e2a \
                -volreg_base_dset SEtarget$SEtarg.nii.gz \
                -anat_has_skull no \
                -align_opts_aea -cost lpc+ZZ -giant_move \
-               -surf_anat /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_SurfVol+orig \
-               -surf_spec /deathstar/data/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
+               -surf_anat $DATAROOT/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_SurfVol+orig \
+               -surf_spec $DATAROOT/$EXPTDIR/$SUBJ/${SUBJ}anat/SUMA/${SUBJ}anat_?h.spec \
                -blur_size $BLURAMT \
                -blip_forward_dset blip_for${SEtarg}_bc.nii.gz  \
                -blip_reverse_dset blip_rev${SEtarg}_bc.nii.gz \
