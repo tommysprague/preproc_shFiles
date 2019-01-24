@@ -20,7 +20,7 @@ The script __preproc_RF.sh__ calls all necessary preprocessing commands to set u
 4. TODO: basic signal quality checks, like tSNR/COV, and computation of noise voxel masks
 
 
-## Task data
+## Task datas
 When preprocessing task data (__preproc_task.sh__), we perform most of the above steps (though we leave out surface-smoothing), and add one other:
 1. __temporal_task.sh__ - detrends data and converts to % signal change
 
@@ -41,3 +41,6 @@ You'll still need to manually run do_RFs.m to recompute RF properties, but other
 
 ## Dependencies
 Some functions (surface-->volume) require repository https://github.com/tommysprague/preproc_mFiles, which requires vistasoft (ideally this branch: https://github.com/tommysprague/vistasoft_ts/tree/sprague_gridfit_updates)
+
+
+s
