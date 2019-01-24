@@ -41,6 +41,3 @@ You'll still need to manually run do_RFs.m to recompute RF properties, but other
 
 ## Dependencies
 Some functions (surface-->volume) require repository https://github.com/tommysprague/preproc_mFiles, which requires vistasoft (ideally this branch: https://github.com/tommysprague/vistasoft_ts/tree/sprague_gridfit_updates)
-
-
-s
